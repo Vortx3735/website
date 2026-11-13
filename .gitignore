@@ -3,3 +3,5 @@ dist/
 .astro/
 .DS_Store
 src/content/docs/docs/
+src/assets/docs/
+public/docs/
