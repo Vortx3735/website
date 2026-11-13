@@ -1,0 +1,25 @@
+/* VorTX brand for the /docs/ section (Starlight). */
+@import '@fontsource/montserrat/400.css';
+@import '@fontsource/montserrat/600.css';
+@import '@fontsource/libre-franklin/900.css';
+:root{
+  --sl-font:Montserrat,sans-serif;
+}
+:root[data-theme='dark']{
+  --sl-color-accent-low:#012131;
+  --sl-color-accent:#7FC241;
+  --sl-color-accent-high:#9BCEE1;
+  --sl-color-black:#012131;
+  --sl-color-gray-6:#00334C;
+  --sl-color-gray-5:#00334C;
+}
+:root[data-theme='light']{
+  --sl-color-accent-low:#F0EBD9;
+  --sl-color-accent:#00334C;
+  --sl-color-accent-high:#00334C;
+  --sl-color-white:#000000;
+}
+.sl-markdown-content h1,.content-panel h1{font-family:"Franklin Gothic Heavy","Libre Franklin",sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:-.01em}
+/* The white logotype only goes on dark, so the header stays navy in both themes. */
+header.header{background:#012131;color:#FFFFFF;--sl-color-black:#012131;--sl-color-white:#FFFFFF;--sl-color-gray-1:#FFFFFF;--sl-color-gray-2:#BCBCBC;--sl-color-gray-3:#BCBCBC;--sl-color-gray-4:#787878;--sl-color-gray-5:#00334C;--sl-color-gray-6:#00334C;--sl-color-accent-low:#012131;--sl-color-accent:#7FC241;--sl-color-accent-high:#9BCEE1}
+header.header a, header.header button{color:#FFFFFF}

@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { settings } from '../lib/content';
+const site = await settings();
+// The calendar comes from calendar_embed_link in content/settings.md.
+const src = site.calendar_embed_link;
+---
+<Base title="Calendar">
+  <PageHead title="Calendar" lead="Meetings, events and competitions." />
+  <section class="section light"><div class="wrap">
+    {src ? <div class="cal"><iframe src={src} title="VorTX team calendar" loading="lazy"></iframe></div>
+         : <p>The calendar is being moved to the new site. Meeting times are on the <a href="/faq/">FAQ</a>.</p>}
+  </div></section>
+</Base>
+<style>
+  .cal{position:relative;aspect-ratio:4/3;max-height:80vh;width:100%}
+  .cal iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  @media (max-width:700px){.cal{aspect-ratio:3/4}}
+</style>

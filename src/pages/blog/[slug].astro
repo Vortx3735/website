@@ -1,0 +1,32 @@
+---
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { posts, photo } from '../../lib/content';
+
+export async function getStaticPaths() {
+  return (await posts()).map((p) => ({ params: { slug: p.id }, props: { p } }));
+}
+const { p } = Astro.props;
+const { Content } = await render(p);
+const img = photo('blog', p.data.cover);
+const date = p.data.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+<Base title={p.data.title} description={p.data.summary ?? undefined}>
+  <article>
+    <header class="page-head"><div class="wrap">
+      <p class="meta"><time datetime={p.data.date.toISOString()}>{date}</time>{p.data.author && <> · {p.data.author}</>}</p>
+      <h1 class="h">{p.data.title}</h1>
+    </div></header>
+    <section class="section light"><div class="wrap prose md">
+      {img && <Image src={img} alt="" width={1200} class="cover" />}
+      <Content />
+      <p class="back"><a href="/blog/">All posts</a></p>
+    </div></section>
+  </article>
+</Base>
+<style>
+  .meta{color:var(--azure);margin-bottom:12px;font-weight:600}
+  .cover{width:100%;height:auto;border-radius:4px;margin-bottom:32px}
+  .back{margin-top:48px}
+</style>

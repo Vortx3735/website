@@ -1,0 +1,44 @@
+---
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { robots, photo } from '../lib/content';
+const list = await Promise.all((await robots()).map(async (r) => ({
+  ...r.data,
+  id: r.id,
+  imgs: r.data.photos.map((p) => photo('robots', p)).filter((i) => i !== null),
+  Content: (await render(r)).Content,
+})));
+---
+<Base title="Robots" description="Every VorTX and Klein Bots robot since 2011.">
+  <PageHead title="Robots" lead="Every robot since 2011, newest first." />
+  <section class="section light"><div class="wrap list">
+    {list.map((r) => (
+      <article class="robot" id={r.id}>
+        <div class="photo main">{r.imgs[0] && <Image src={r.imgs[0]} alt={`${r.name}, our ${r.year} robot`} width={800} />}</div>
+        <div class="txt">
+          <span class="yr">{r.year}</span>
+          <h2 class="h">{r.name}</h2>
+          <p class="game">{r.game}</p>
+          <div class="md"><r.Content /></div>
+          {r.awards.length > 0 && <ul class="aw">{r.awards.map((a) => <li>{a}</li>)}</ul>}
+          {r.imgs.length > 1 && <div class="thumbs">{r.imgs.slice(1).map((s) => <Image src={s} alt="" width={192} />)}</div>}
+        </div>
+      </article>
+    ))}
+  </div></section>
+</Base>
+<style>
+  .list{display:grid;gap:56px}
+  .robot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:40px;align-items:center}
+  .robot .main{aspect-ratio:4/3;border-radius:4px}
+  .yr{font:900 40px/1 var(--head);color:var(--navy);font-variant-numeric:tabular-nums}
+  .robot h2{margin:6px 0 4px}
+  .game{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:15px;color:var(--navy);margin-bottom:12px}
+  .aw{list-style:none;margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
+  .aw li{background:var(--cream);color:var(--navy);font-size:15px;font-weight:600;padding:6px 10px;border-radius:3px}
+  .thumbs{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+  .thumbs img{width:96px;height:72px;object-fit:cover;border-radius:3px}
+  @media (max-width:760px){.robot{grid-template-columns:1fr;gap:20px}}
+</style>

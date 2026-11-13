@@ -1,0 +1,25 @@
+{
+  "name": "vortx3735-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "fetch-media": "node scripts/fetch-wp-media.mjs"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.43.1",
+    "@fontsource/libre-franklin": "^5.3.0",
+    "@fontsource/montserrat": "^5.3.0",
+    "astro": "^7.4.12",
+    "starlight-obsidian": "^0.15.0"
+  },
+  "overrides": {
+    "katex": "^0.19.1",
+    "decode-uri-component": "^0.5.1"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  }
+}
