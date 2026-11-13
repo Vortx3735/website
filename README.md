@@ -37,6 +37,15 @@ fields in `src/data/` are paths under `public/images/wp/`.
 
 **Photos of students:** only add photos of students who are covered by a media release.
 
+## The /docs notes (VorTXObsidian)
+
+The programming notes at `/docs/` come from the [VorTXObsidian](https://github.com/Vortx3735/VorTXObsidian)
+repo, which students edit in Obsidian. The deploy workflow builds them with Quartz and publishes them
+alongside this site. They are not stored in this repo.
+
+To preview them locally: clone VorTXObsidian next to this repo, run `npm ci --legacy-peer-deps`
+and `npx quartz build -o ../website/dist/docs` in it, then `npm run preview` here.
+
 ## Brand rules
 
 From the 2026 brand guide. Colors and fonts are set once in `src/styles/global.css`; use those variables.
