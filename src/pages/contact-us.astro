@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import site from '../data/site.json';
+// The form posts to a form service (e.g. Formspree) set in src/data/site.json
+// as contactFormAction. Until that is set, the form is hidden.
+const action = site.contactFormAction;
+---
+<Base title="Contact us">
+  <PageHead title="Contact us" />
+  <section class="section light"><div class="wrap contact">
+    <div>
+      <h2 class="h">Visit</h2>
+      <address>{site.address.map((l) => <span>{l}</span>)}</address>
+      <p class="spon">Interested in sponsoring? <a href="/support-us/">See the sponsorship package</a>.</p>
+    </div>
+    {action ? (
+      <form method="POST" action={action} class="form">
+        <div class="row">
+          <label>First name<input name="first_name" id="first_name" required autocomplete="given-name"></label>
+          <label>Last name<input name="last_name" id="last_name" required autocomplete="family-name"></label>
+        </div>
+        <label>Email<input type="email" name="email" id="email" required autocomplete="email"></label>
+        <label>Message<textarea name="message" id="message" rows="6" required></textarea></label>
+        <button class="btn btn-dark" type="submit">Send message</button>
+      </form>
+    ) : (
+      <p class="todo">The contact form is being moved to the new site.</p>
+    )}
+  </div></section>
+</Base>
+<style>
+  .contact{display:grid;grid-template-columns:1fr 1.4fr;gap:56px}
+  address{font-style:normal;display:flex;flex-direction:column;font-size:18px;margin-bottom:24px}
+  .form{display:grid;gap:18px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px}
+  input,textarea{font:inherit;font-weight:400;padding:12px 14px;border:2px solid var(--lgrey);border-radius:4px;background:var(--white);color:var(--black)}
+  input:focus,textarea:focus{outline:none;border-color:var(--navy)}
+  .todo{padding:24px;background:var(--cream)}
+  @media (max-width:760px){.contact,.row{grid-template-columns:1fr}}
+</style>

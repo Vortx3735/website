@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import awards from '../data/awards.json';
+---
+<Base title="Awards">
+  <PageHead title="Awards" />
+  <section class="section"><div class="wrap">
+    <ul class="aw">{awards.map((a) => <li><b>{a.year}</b><span>{a.award}{a.detail && <small>{a.detail}</small>}</span></li>)}</ul>
+  </div></section>
+</Base>
+<style>
+  .aw{list-style:none;columns:2;column-gap:56px}
+  .aw li{break-inside:avoid;display:flex;gap:20px;padding:14px 0;border-bottom:1px solid rgba(155,206,225,.2)}
+  .aw b{font:900 20px/1.4 var(--head);color:var(--green);min-width:3em;font-variant-numeric:tabular-nums}
+  .aw span{display:flex;flex-direction:column}
+  .aw small{color:var(--azure);font-size:13px}
+  @media (max-width:760px){.aw{columns:1}}
+</style>

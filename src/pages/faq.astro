@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import site from '../data/site.json';
+---
+<Base title="FAQ">
+  <PageHead title="FAQ" />
+  <section class="section light"><div class="wrap prose faq">
+    <h2 class="h">When are the meetings?</h2>
+    <p><b>Offseason (April through December):</b> every Friday, 3:30 to 7:30 pm.</p>
+    <p><b>Season (January through April):</b> Monday, Wednesday and Friday, 3:30 to 7:30 pm, and Saturday, 9 am to 2 pm.</p>
+    <p>Meetings can change, but we announce changes in advance. See the <a href="/calendar/">calendar</a>.</p>
+    <h2 class="h">Where are the meetings?</h2>
+    <p>In the Klein High garage: <br>{site.address.join(', ')}</p>
+  </div></section>
+</Base>
+<style>.faq h2{margin-top:40px}.faq h2:first-child{margin-top:0}</style>

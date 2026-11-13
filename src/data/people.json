@@ -1,0 +1,9 @@
+{
+  "leadership": [
+    { "name": "Aaron C.", "role": "Team Captain" },
+    { "name": "Timothy Luu", "role": "Business Lead" },
+    { "name": "Cillian O.", "role": "Robot Lead" }
+  ],
+  "mentors": ["Lewis L.", "Toan N.", "Rohan K.", "Bob C.", "Samantha T.", "Kameela B.", "James S.", "Lino C.", "Jack S.", "James N."],
+  "coaches": ["Patrick Rivera", "Tiara Woods", "Elizabeth Wallace"]
+}

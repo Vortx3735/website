@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import people from '../data/people.json';
+---
+<Base title="Leadership">
+  <PageHead title="Leadership" lead="This season's student leads." />
+  <section class="section light"><div class="wrap">
+    <ul class="people">{people.leadership.map((p) => <li><b>{p.name}</b><span>{p.role}</span></li>)}</ul>
+  </div></section>
+</Base>
+<style>
+  .people{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px}
+  .people li{background:var(--cream);padding:24px;display:flex;flex-direction:column;gap:4px}
+  .people b{font:900 24px/1.1 var(--head);text-transform:uppercase;color:var(--navy)}
+  .people span{font-size:14px;color:var(--black)}
+</style>

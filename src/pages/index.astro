@@ -1,0 +1,148 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import site from '../data/site.json';
+import robots from '../data/robots.json';
+import awards from '../data/awards.json';
+import sponsors from '../data/sponsors.json';
+import { wp, local } from '../lib/media';
+
+const current = robots[0];
+const yearAwards = awards.filter((a) => a.year === current.year).map((a) => a.award);
+const rail = robots.map((r) => ({
+  ...r,
+  img: wp(r.photos[0]),
+  award: awards.find((a) => r.year.startsWith(a.year) && !a.award.startsWith("Dean's List"))?.award,
+  long: r.year.length > 4,
+}));
+const video = local(site.heroVideo);
+const poster = local(site.heroPoster);
+const named = sponsors.filter((s) => !s.name.includes('unknown') && s.name !== 'Klein Bots');
+---
+<Base overlayHeader>
+  <section class="hero">
+    <div class="photo hero-media">
+      {poster && <img src={poster} alt="" fetchpriority="high">}
+      {video && <video autoplay muted loop playsinline preload="metadata" poster={poster ?? undefined} src={video}></video>}
+      {video && <button class="vidctl" type="button" aria-label="Pause the time-lapse" aria-pressed="false">
+        <svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>
+        <svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3l8 5-8 5z"/></svg>
+      </button>}
+    </div>
+    <div class="wrap hero-in">
+      <h1 class="h">We take the world <em>by storm</em></h1>
+      <div class="plate">
+        <dl>
+          <dt>{current.year} robot</dt><dd>{current.name} · {current.game}</dd>
+          <dt>Named for</dt><dd>Alumnus Noah Lewis</dd>
+          {yearAwards.length > 0 && <><dt>Honors</dt><dd>{yearAwards.join(' · ')}</dd></>}
+        </dl>
+        <div class="acts">
+          <a class="btn btn-go" href="/join-us/">Join the team <Icon name="arrow" /></a>
+          <a class="btn btn-line" href="/support-us/">Sponsor us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seasons">
+    <div class="wrap">
+      <div class="seasons-head">
+        <h2 class="h">Fifteen seasons, one team</h2>
+        <p>Klein Bots in 2011, VorTX since 2017. Every robot, every game. <a href="/robots/">See all robots</a></p>
+      </div>
+      <div class="rail" tabindex="0" aria-label="Robots by season, scroll sideways">
+        {rail.map((r, i) => (
+          <article class:list={['yr', { now: i === 0 }]}>
+            <div class="photo">{r.img && <img src={r.img} alt={`${r.name}, our ${r.year} robot`} loading="lazy">}</div>
+            <div class="t">
+              <b class:list={{ long: r.long }}>{r.year}</b>
+              <h3>{r.name}</h3>
+              <small>{r.game}</small>
+              {r.award && <div class="aw"><Icon name="trophy" />{r.award}</div>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="asks">
+    <div class="ask join">
+      <h2 class="h">Build with us</h2>
+      <p>No experience needed. Students from Klein High, Klein Cain, Klein Oak, Klein Collins and Klein Forest build, code, design and run outreach together.</p>
+      <a class="btn btn-dark" href="/join-us/">Join the team</a>
+    </div>
+    <div class="ask back">
+      <h2 class="h">Back the build</h2>
+      <p>Sponsors fund parts, travel and summer camps. See what your support makes possible in our sponsorship package.</p>
+      <ul class="sp">{named.map((s) => <li>{s.name}</li>)}</ul>
+      <a class="btn btn-go" href="/support-us/">Sponsor us</a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.vidctl');
+  const vid = document.querySelector<HTMLVideoElement>('.hero-media video');
+  if (btn && vid) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const set = (paused: boolean) => {
+      btn.setAttribute('aria-pressed', String(paused));
+      btn.setAttribute('aria-label', paused ? 'Play the time-lapse' : 'Pause the time-lapse');
+    };
+    if (reduce.matches) { vid.pause(); vid.removeAttribute('autoplay'); set(true); }
+    btn.addEventListener('click', () => { if (vid.paused) { vid.play(); set(false); } else { vid.pause(); set(true); } });
+  }
+</script>
+
+<style>
+  .hero{min-height:min(100svh,960px);display:grid;align-items:end;position:relative;padding-top:120px}
+  .hero-media{position:absolute;inset:0}
+  .hero-media img,.hero-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(1,33,49,.8) 0%,rgba(1,33,49,.55) 30%,rgba(1,33,49,.7) 60%,rgba(1,33,49,.96) 100%)}
+  .vidctl{position:absolute;z-index:2;right:var(--gutter);bottom:20px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(1,33,49,.72);color:var(--white);display:grid;place-items:center;cursor:pointer;transition:background .3s var(--ease),color .3s var(--ease)}
+  .vidctl:hover{background:var(--green);color:var(--deep)}
+  .vidctl svg{width:16px;height:16px;grid-area:1/1}
+  .vidctl .i-play,.vidctl[aria-pressed="true"] .i-pause{display:none}
+  .vidctl[aria-pressed="true"] .i-play{display:block}
+  .hero-in{position:relative;z-index:1;padding:0 0 72px;display:grid;grid-template-columns:1.4fr 1fr;gap:48px;align-items:end}
+  .hero h1{font-size:clamp(3rem,7vw,6rem)}
+  .hero h1 em{font-style:normal;color:var(--green)}
+  .plate{border-top:2px solid var(--green);padding-top:18px}
+  .plate dl{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;margin-bottom:24px}
+  .plate dt{color:var(--azure);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:12px;padding-top:2px}
+  .acts{display:flex;gap:12px;flex-wrap:wrap}
+  .seasons{padding:96px 0 80px;background:var(--navy)}
+  .seasons-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:36px}
+  .seasons h2{font-size:clamp(2.2rem,4vw,3.5rem)}
+  .seasons-head p{max-width:42ch;color:var(--azure)}
+  .seasons-head a{color:var(--white);font-weight:600}
+  .rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:2px;overflow-x:auto;padding-bottom:14px;scroll-snap-type:x mandatory;overscroll-behavior-x:contain}
+  .yr{scroll-snap-align:start;background:var(--deep);display:flex;flex-direction:column}
+  .yr .photo{aspect-ratio:4/5}
+  .yr .t{padding:18px 18px 22px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .yr b{font:900 44px/1 var(--head);color:var(--green);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .yr b.long{font-size:32px;line-height:44px}
+  .yr h3{font:900 22px/1.05 var(--head);text-transform:uppercase}
+  .yr small{font-size:13px;color:var(--azure)}
+  .yr .aw{margin-top:auto;padding-top:12px;font-size:12px;font-weight:600;color:var(--cream);display:flex;gap:8px;align-items:flex-start}
+  .yr .aw :global(svg){flex:none;width:14px;height:14px;margin-top:2px;color:var(--green)}
+  .yr.now{box-shadow:inset 0 3px 0 var(--green)}
+  .yr.now b{color:var(--white)}
+  .asks{display:grid;grid-template-columns:1fr 1fr}
+  .ask{padding:88px 64px;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
+  .ask.join{padding-left:max(16px,calc((100vw - 1240px)/2));background:var(--cream);color:var(--black)}
+  .ask.back{padding-right:max(16px,calc((100vw - 1240px)/2));background:var(--deep)}
+  .ask h2{font-size:clamp(2rem,3.5vw,3rem)}
+  .ask.join h2{color:var(--navy)}
+  .ask p{max-width:46ch}
+  .sp{list-style:none;display:flex;flex-wrap:wrap;gap:10px 26px;font-weight:700;font-size:15px;color:var(--lgrey)}
+  @media (max-width:860px){
+    .hero-in{grid-template-columns:1fr;gap:28px}
+    .asks{grid-template-columns:1fr}
+    .ask,.ask.join,.ask.back{padding:64px var(--gutter)}
+    .seasons-head{flex-direction:column;align-items:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){.hero-media video{display:none}}
+</style>

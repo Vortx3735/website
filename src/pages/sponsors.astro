@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import sponsors from '../data/sponsors.json';
+import { wp } from '../lib/media';
+const list = sponsors.map((s) => ({ ...s, img: wp(s.logo) }));
+---
+<Base title="Sponsors">
+  <PageHead title="Our sponsors" lead="Thank you. You make every season possible." />
+  <section class="section light"><div class="wrap">
+    <ul class="logos">{list.map((s) => <li>{s.img ? <img src={s.img} alt={s.name} loading="lazy"> : <span>{s.name}</span>}</li>)}</ul>
+    <p class="more"><a class="btn btn-dark" href="/support-us/">Become a sponsor</a></p>
+  </div></section>
+</Base>
+<style>
+  .logos{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px}
+  .logos li{background:var(--white);border:1px solid #e4e4e4;height:140px;display:grid;place-items:center;padding:20px;text-align:center;font-weight:700;color:var(--navy)}
+  .logos img{max-height:96px;width:auto;object-fit:contain}
+  .more{margin-top:40px}
+</style>

@@ -1,0 +1,17 @@
+[
+  { "year": "2026", "name": "Noah's Ark", "game": "REBUILT", "note": "Named in loving memory of our alumnus Noah Lewis.", "photos": ["2026/03/IMG_0715-scaled.jpg"] },
+  { "year": "2025", "name": "Bermuda", "game": "Reefscape", "photos": ["2025/04/IMG_8956-scaled.jpg"] },
+  { "year": "2024", "name": "SoundByte", "game": "Crescendo", "photos": ["2024/08/DSC_9026.jpg", "2024/08/DSC_9082.jpg", "2024/08/IMG_0473-2.jpg", "2024/08/IMG_0726-2.jpg"] },
+  { "year": "2023", "name": "Guillotine", "game": "Charged Up", "note": "Named after its giant elevator.", "photos": ["2024/08/P4013442-scaled.jpg", "2024/08/P4013378-scaled.jpg", "2024/08/P4013255-scaled.jpg"] },
+  { "year": "2022", "name": "Mantis", "game": "Rapid React", "note": "Named for its praying-mantis-like design.", "photos": ["2024/08/P1011315-scaled.jpg", "2024/08/image.jpg", "2024/08/image1.jpg"] },
+  { "year": "2020–21", "name": "Lightsaber", "game": "Infinite Recharge", "note": "This robot never got to compete.", "photos": ["2024/08/IMG_4719-scaled.jpg"] },
+  { "year": "2019", "name": "K.I.R.T. 2.0", "game": "Destination: Deep Space", "note": "A tribute to the last generation of Klein Bots members and our original robot, K.I.R.T.", "photos": ["2024/08/IMG_6528-scaled.jpg", "2024/08/IMG_6550-scaled.jpg", "2024/08/IMG_6518-scaled.jpg"] },
+  { "year": "2018", "name": "Valkyrie", "game": "Power Up", "photos": ["2024/08/5D3_3459-scaled.jpg", "2024/08/IMG_3236-scaled.jpg", "2024/08/IMG_4752-scaled.jpg", "2024/08/IMG_3291-scaled.jpg", "2024/08/IMG_3248-scaled.jpg", "2024/08/IMG_3330-scaled.jpg"] },
+  { "year": "2017", "name": "Tempest", "game": "Steamworks", "note": "Our first robot under the VorTX name.", "photos": ["2024/08/hubCityRegional2017_132-scaled.jpg", "2024/08/hubCityRegional2017_155-scaled.jpg", "2024/08/unnamed-scaled.jpg"] },
+  { "year": "2016", "name": "Sabre", "game": "Stronghold", "note": "Our last robot as Klein Bots.", "photos": ["2024/08/IMG_8263-scaled.jpg", "2024/08/IMG_7551-scaled.jpg", "2024/08/HRR2k16-5213-scaled.jpg", "2024/08/HRR2k16-5190-scaled.jpg"] },
+  { "year": "2015", "name": "STAG", "game": "Recycle Rush", "photos": ["2024/08/IMG_7482.jpg", "2024/08/IMG_8396.jpg", "2024/08/IMG_8337.jpg"] },
+  { "year": "2014", "name": "Synergy", "game": "Aerial Assist", "photos": ["2024/08/IMG_4867-scaled.jpg", "2024/08/IMG_4871-scaled.jpg"] },
+  { "year": "2013", "name": "The Gator", "game": "Ultimate Ascent", "photos": ["2024/08/IMG_0148-1.jpg", "2024/08/IMG_0182-1.jpg", "2024/08/Robot-without-upgrade.jpg"] },
+  { "year": "2012", "name": "Shocker", "game": "Rebound Rumble", "photos": ["2024/08/HPIM3924.jpg", "2024/08/HPIM3930.jpg", "2024/08/HPIM3927-1.jpg"] },
+  { "year": "2011", "name": "K.I.R.T.", "game": "Logo Motion", "note": "Our first robot. K.I.R.T. stands for Klein ISD Robotics Team.", "photos": ["2024/08/HPIM3511.jpg"] }
+]
