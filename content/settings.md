@@ -6,7 +6,7 @@ address_line_3: "Spring, TX 77379"
 join_form_link: "https://forms.gle/vXbyrsbXqdWCsnZ67"
 sponsor_packet_link: "/files/2026-2027-VorTX-Sponsorship-Packet.pdf"
 brand_guide_link: "https://drive.google.com/file/d/15kdqpQoUk89nF5z68MN7_vn96tGhMB9w/view"
-calendar_embed_link: ""
+calendar_embed_link: "https://calendar.google.com/calendar/embed?src=vortx3735inc%40gmail.com&ctz=America%2FChicago"
 contact_form_link: ""
 ---
 
