@@ -10,7 +10,7 @@ const list = (await sponsors()).map((s) => ({ ...s.data, img: photo('sponsors', 
   <section class="section light"><div class="wrap">
     <ul class="logos">{list.map((s) => {
       const inner = s.img ? <Image src={s.img} alt={s.name} width={320} /> : <span>{s.name}</span>;
-      return <li>{s.website ? <a href={s.website}>{inner}</a> : inner}</li>;
+      return <li class:list={{ linked: !!s.website }}>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{inner}<span class="go" aria-hidden="true">Visit site ↗</span></a> : inner}</li>;
     })}</ul>
     <p class="more"><a class="btn btn-dark" href="/support-us/">Become a sponsor</a></p>
   </div></section>
@@ -18,7 +18,12 @@ const list = (await sponsors()).map((s) => ({ ...s.data, img: photo('sponsors', 
 <style>
   .logos{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px}
   .logos li{background:var(--white);border:1px solid #e4e4e4;height:140px;display:grid;place-items:center;padding:20px;text-align:center;font-weight:700;color:var(--navy)}
+  .logos li{position:relative;transition:border-color .2s}
   .logos a{display:grid;place-items:center;width:100%;height:100%;text-decoration:none}
+  .logos .go{position:absolute;right:10px;bottom:8px;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--grey);opacity:0;transition:opacity .2s}
+  .logos li.linked:hover,.logos li.linked:focus-within{border-color:var(--green)}
+  .logos li.linked:hover .go,.logos li.linked:focus-within .go{opacity:1}
+  @media (hover:none){.logos .go{opacity:1}}
   .logos img{max-height:96px;width:auto;object-fit:contain}
   .more{margin-top:40px}
 </style>

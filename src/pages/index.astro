@@ -17,7 +17,7 @@ const rail = all.map((r) => ({
 // The time-lapse video and its still frame live in public/media/.
 const video = existsSync('public/media/build-season-timelapse.mp4') ? '/media/build-season-timelapse.mp4' : null;
 const poster = '/media/build-season-timelapse.jpg';
-const names = (await sponsors()).map((s) => s.data.name);
+const sponsorList = (await sponsors()).map((s) => s.data);
 ---
 <Base overlayHeader>
   <section class="hero">
@@ -76,7 +76,7 @@ const names = (await sponsors()).map((s) => s.data.name);
     <div class="ask back">
       <h2 class="h">{home.sponsor_heading}</h2>
       <p>{home.sponsor_text}</p>
-      <ul class="sp">{names.map((n) => <li>{n}</li>)}</ul>
+      <ul class="sp">{sponsorList.map((s) => <li>{s.website ? <a href={s.website} rel="noopener">{s.name}</a> : s.name}</li>)}</ul>
       <a class="btn btn-go" href="/support-us/">Sponsor us</a>
     </div>
   </section>
@@ -118,15 +118,19 @@ const names = (await sponsors()).map((s) => s.data.name);
   .seasons h2{font-size:clamp(2.2rem,4vw,3.5rem)}
   .seasons-head p{max-width:42ch;color:var(--azure)}
   .seasons-head a{color:var(--white);font-weight:600}
-  .rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:2px;overflow-x:auto;padding-bottom:14px;scroll-snap-type:x mandatory;overscroll-behavior-x:contain}
-  .yr{scroll-snap-align:start;background:var(--deep);display:flex;flex-direction:column}
+  .rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);grid-template-rows:auto auto auto auto 1fr;column-gap:2px;row-gap:0;overflow-x:auto;padding-bottom:14px;scroll-snap-type:x mandatory;overscroll-behavior-x:contain}
+  /* Each card shares the rail's rows (subgrid), so years, names, games and awards line up across cards. */
+  .yr{scroll-snap-align:start;background:var(--deep);display:grid;grid-row:span 5;grid-template-rows:subgrid}
   .yr .photo{aspect-ratio:4/5}
-  .yr .t{padding:18px 18px 22px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .yr .t{display:contents}
+  .yr .t > *{padding-inline:18px}
+  .yr b{padding-top:18px}
+  .yr h3{margin-top:6px}
   .yr b{font:900 44px/1 var(--head);color:var(--green);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
   .yr b.long{font-size:32px;line-height:44px}
   .yr h3{font:900 22px/1.05 var(--head);text-transform:uppercase}
-  .yr small{font-size:16px;color:var(--azure)}
-  .yr .aw{margin-top:auto;padding-top:12px;font-size:15px;font-weight:600;color:var(--cream);display:flex;gap:8px;align-items:flex-start}
+  .yr small{font-size:16px;color:var(--azure);margin-top:6px;line-height:1.5}
+  .yr .aw{align-self:start;padding-top:14px;padding-bottom:22px;line-height:1.5;font-size:15px;font-weight:600;color:var(--cream);display:flex;gap:8px;align-items:flex-start}
   .yr .aw :global(svg){flex:none;width:14px;height:14px;margin-top:2px;color:var(--green)}
   .yr.now{box-shadow:inset 0 3px 0 var(--green)}
   .yr.now b{color:var(--white)}
@@ -138,6 +142,8 @@ const names = (await sponsors()).map((s) => s.data.name);
   .ask.join h2{color:var(--navy)}
   .ask p{max-width:46ch}
   .sp{list-style:none;display:flex;flex-wrap:wrap;gap:10px 26px;font-weight:700;font-size:18px;color:var(--lgrey)}
+  .sp a{color:inherit;text-decoration:underline;text-decoration-color:rgba(188,188,188,.4);text-underline-offset:.25em}
+  .sp a:hover{color:var(--green);text-decoration-color:currentColor}
   @media (max-width:860px){
     .hero-in{grid-template-columns:1fr;gap:28px}
     .asks{grid-template-columns:1fr}

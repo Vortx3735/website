@@ -12,17 +12,31 @@ const hasBlog = (await posts()).length > 0;
 interface Props { title?: string; description?: string; overlayHeader?: boolean }
 const { title, description = 'FRC Team 3735 VorTX, the Klein ISD robotics team in Spring, Texas.', overlayHeader = false } = Astro.props;
 const fullTitle = title ? `${title} · VorTX 3735` : 'VorTX 3735 · FRC robotics, Klein ISD';
-const nav = [
-  { href: '/about/', label: 'About' },
+type Item = { href: string; label: string; children?: { href: string; label: string }[] };
+const nav: Item[] = [
+  { href: '/about/', label: 'About', children: [
+    { href: '/about/', label: 'About VorTX' },
+    { href: '/our-mission/', label: 'Our mission' },
+    { href: '/our-history/', label: 'Our history' },
+    { href: '/leadership/', label: 'Leadership' },
+    { href: '/coaches-mentors/', label: 'Coaches & mentors' },
+    { href: '/faq/', label: 'FAQ' },
+  ] },
   { href: '/robots/', label: 'Robots' },
   { href: '/awards/', label: 'Awards' },
   { href: '/join-us/', label: 'Join us' },
   { href: '/sponsors/', label: 'Sponsors' },
   ...(hasBlog ? [{ href: '/blog/', label: 'Blog' }] : []),
-  { href: '/resources/', label: 'Resources' },
+  { href: '/resources/', label: 'Resources', children: [
+    { href: '/resources/', label: 'All resources' },
+    { href: '/docs/', label: 'Programming docs' },
+    { href: site.brand_guide_link, label: 'Brand guide' },
+    { href: 'https://github.com/Vortx3735', label: 'Code on GitHub' },
+  ] },
   { href: '/calendar/', label: 'Calendar' },
 ];
 const path = Astro.url.pathname;
+const isCurrent = (n: Item) => [n.href, ...(n.children ?? []).map((c) => c.href)].some((h) => h.startsWith('/') && path.startsWith(h));
 ---
 <!doctype html>
 <html lang="en">
@@ -44,7 +58,15 @@ const path = Astro.url.pathname;
       <a href="/" class="logo" aria-label="VorTX 3735 home"><img src="/images/logotype-white.png" alt="VorTX 3735" width="150" height="40"></a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
       <nav id="main-nav" aria-label="Main">
-        {nav.map((n) => <a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>)}
+        {nav.map((n, i) => n.children ? (
+          <div class="dd">
+            <a href={n.href} class="top" aria-current={isCurrent(n) ? 'page' : undefined}>{n.label}</a>
+            <button class="dd-btn" type="button" aria-expanded="false" aria-controls={`sub-${i}`} aria-label={`${n.label} menu`}><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></button>
+            <ul class="sub" id={`sub-${i}`}>
+              {n.children.map((c) => <li><a href={c.href} aria-current={c.href.startsWith('/') && path === c.href ? 'page' : undefined}>{c.label}</a></li>)}
+            </ul>
+          </div>
+        ) : <a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>)}
       </nav>
     </div>
   </header>
@@ -61,6 +83,15 @@ const path = Astro.url.pathname;
   <script>
     const b = document.querySelector('.menu-btn'), n = document.getElementById('main-nav');
     b?.addEventListener('click', () => { const o = n.classList.toggle('open'); b.setAttribute('aria-expanded', String(o)); });
+    const dds = [...document.querySelectorAll('.dd')];
+    const closeAll = (except) => dds.forEach((d) => { if (d !== except) { d.classList.remove('show'); d.querySelector('.dd-btn')?.setAttribute('aria-expanded', 'false'); } });
+    dds.forEach((d) => {
+      const btn = d.querySelector('.dd-btn');
+      btn?.addEventListener('click', () => { const o = d.classList.toggle('show'); btn.setAttribute('aria-expanded', String(o)); closeAll(d); });
+      d.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeAll(); btn?.focus(); } });
+      d.addEventListener('focusout', (e) => { if (!d.contains(e.relatedTarget)) { d.classList.remove('show'); btn?.setAttribute('aria-expanded', 'false'); } });
+    });
+    document.addEventListener('click', (e) => { if (!e.target.closest('.dd')) closeAll(); });
   </script>
 </body>
 </html>
@@ -74,6 +105,17 @@ const path = Astro.url.pathname;
   nav{display:flex;gap:28px}
   nav a{white-space:nowrap;font:600 15px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;padding:12px 0;opacity:.9;transition:color .2s}
   nav a:hover,nav a[aria-current]{color:var(--green);opacity:1}
+  nav{align-items:center}
+  .dd{position:relative;display:flex;align-items:center;gap:2px}
+  .dd-btn{background:none;border:0;color:inherit;cursor:pointer;width:24px;height:36px;display:grid;place-items:center;opacity:.9;border-radius:4px}
+  .dd-btn svg{width:12px;height:12px;transition:transform .2s}
+  .dd-btn:hover{color:var(--green)}
+  .dd.show .dd-btn svg{transform:rotate(180deg)}
+  .sub{list-style:none;position:absolute;top:100%;left:-18px;min-width:230px;background:var(--deep);border:1px solid rgba(155,206,225,.18);border-radius:4px;padding:8px 0;box-shadow:0 18px 40px rgba(0,0,0,.35);opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .15s,visibility .15s;z-index:20}
+  .sub a{display:block;padding:12px 18px;letter-spacing:.06em}
+  .sub a:hover{background:var(--navy)}
+  .dd:hover .sub,.dd.show .sub{opacity:1;visibility:visible;transform:none}
+  @media (prefers-reduced-motion:reduce){.sub,.dd-btn svg{transition:none}}
   @media (max-width:1180px){nav{gap:20px}nav a{letter-spacing:.08em}}
   @media (max-width:980px){
     .menu-btn{display:grid}
@@ -81,6 +123,13 @@ const path = Astro.url.pathname;
     nav{display:none;position:absolute;left:0;right:0;top:100%;flex-direction:column;gap:0;background:var(--deep);padding:8px var(--gutter) 20px;border-top:1px solid rgba(155,206,225,.18)}
     nav.open{display:flex}
     nav a{padding:16px 0;border-bottom:1px solid rgba(155,206,225,.12)}
+    nav{align-items:stretch}
+    .dd{display:block}
+    .dd .top{display:block}
+    .dd-btn{display:none}
+    .sub{position:static;opacity:1;visibility:visible;transform:none;border:0;box-shadow:none;padding:0;min-width:0;background:none}
+    .sub a{padding:14px 0 14px 20px;font-size:14px;opacity:.8}
+    .sub li:first-child{display:none}
   }
   .site-footer{border-top:1px solid rgba(155,206,225,.18);padding:48px 0 32px;font-size:17px;color:var(--lgrey)}
   .cols{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
