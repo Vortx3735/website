@@ -1,9 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import site from '../data/site.json';
-// Paste the Google Calendar embed URL (Settings > Integrate calendar > Embed code, the src="...") into src/data/site.json as calendarEmbedUrl.
-const src = site.calendarEmbedUrl;
+import { settings } from '../lib/content';
+const site = await settings();
+// The calendar comes from calendar_embed_link in content/settings.md.
+const src = site.calendar_embed_link;
 ---
 <Base title="Calendar">
   <PageHead title="Calendar" lead="Meetings, events and competitions." />

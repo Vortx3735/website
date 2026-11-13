@@ -15,36 +15,30 @@ npm run dev           # opens the site at http://localhost:4321
 
 ## Making changes
 
-Make a branch, edit, open a pull request. The build check must pass before merging.
+**You don't need to code.** Everything on the site is a Markdown file in **`content/`**.
+Read [`content/Start here.md`](content/Start%20here.md) for the step-by-step guide.
 
-Most edits are in **`src/data/`** and don't need any code:
+Two ways to edit:
+
+1. **On github.com:** open a file in `content/`, click the pencil, edit, and choose
+   "Create a new branch and start a pull request". A mentor reviews and merges it.
+2. **In Obsidian:** clone this repo with GitHub Desktop, open the `content/` folder as a vault,
+   edit, then commit and push from GitHub Desktop.
 
 | To change | Edit |
 |---|---|
-| Robots (one entry per season, newest first) | `src/data/robots.json` |
-| Awards | `src/data/awards.json` |
-| Sponsors and their logos | `src/data/sponsors.json` |
-| Student leads, mentors, coaches | `src/data/people.json` |
-| Join form link, sponsor PDF, calendar, contact form, hero video | `src/data/site.json` |
+| Homepage text | `content/pages/home.md` |
+| About, Mission, History, FAQ, Leadership, Mentors, Join, Support | `content/pages/*.md` (one per page) |
+| Robots and each season's awards | `content/robots/*.md` (one per season) |
+| Sponsors and their logos | `content/sponsors/*.md` (one per sponsor) |
+| Blog posts (`draft: true` hides a post) | `content/blog/*.md` |
+| Address, join form, sponsor packet, calendar, contact form | `content/settings.md` |
+| Programming notes at `/docs/` | `content/docs/` |
 
-Page text lives in `src/pages/<page>.astro`. Each page's URL matches its file name.
-
-### Photos
-
-Put images in `public/images/`. Robot photos and sponsor logos use the same paths they
-had on WordPress (`public/images/wp/2024/08/DSC_9026.jpg`), so the `photos` and `logo`
-fields in `src/data/` are paths under `public/images/wp/`.
+Put images in the `assets/` folder next to the file that uses them. Obsidian does this for you.
+A new Markdown file in `content/pages/` becomes a new page at `/<file-name>/`.
 
 **Photos of students:** only add photos of students who are covered by a media release.
-
-## The /docs notes (VorTXObsidian)
-
-The programming notes at `/docs/` come from the [VorTXObsidian](https://github.com/Vortx3735/VorTXObsidian)
-repo, which students edit in Obsidian. The deploy workflow builds them with Quartz and publishes them
-alongside this site. They are not stored in this repo.
-
-To preview them locally: clone VorTXObsidian next to this repo, run `npm ci --legacy-peer-deps`
-and `npx quartz build -o ../website/dist/docs` in it, then `npm run preview` here.
 
 ## Brand rules
 
@@ -57,7 +51,8 @@ From the 2026 brand guide. Colors and fonts are set once in `src/styles/global.c
 ## Still to do before launch
 
 - [ ] Run `npm run fetch-media` and commit the photos (check media releases first)
-- [ ] Pick a contact form service (e.g. Formspree) and set `contactFormAction` in `src/data/site.json`
-- [ ] Paste the Google Calendar embed URL into `calendarEmbedUrl`
-- [ ] Choose hosting (GitHub Pages, Netlify or Cloudflare Pages) and add a deploy workflow
+- [ ] Pick a contact form service (e.g. Formspree) and set `contact_form_link` in `content/settings.md`
+- [ ] Paste the Google Calendar embed URL into `calendar_embed_link` in `content/settings.md`
+- [ ] Choose hosting. GitHub Pages on a free org needs this repo public; then set the repo variable `PAGES_ENABLED` to `true`
+- [ ] Archive the old VorTXObsidian repo and point its old URL at `/docs/`
 - [ ] Point vortx3735.org at the new host (mentor sign-off required)

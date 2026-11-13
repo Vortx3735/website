@@ -1,0 +1,35 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { posts, photo } from '../../lib/content';
+const list = (await posts()).map((p) => ({ ...p, img: photo('blog', p.data.cover) }));
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+<Base title="Blog" description="News from FRC Team 3735 VorTX.">
+  <PageHead title="Blog" lead="News from the shop, the field and the community." />
+  <section class="section light"><div class="wrap">
+    {list.length === 0 ? <p>No posts yet.</p> : (
+      <ul class="posts">
+        {list.map((p) => (
+          <li>
+            <a href={`/blog/${p.id}/`}>
+              <div class="photo">{p.img && <Image src={p.img} alt="" width={640} />}</div>
+              <time datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time>
+              <h2>{p.data.title}</h2>
+              {p.data.summary && <p>{p.data.summary}</p>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div></section>
+</Base>
+<style>
+  .posts{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:40px 32px}
+  .posts a{text-decoration:none;display:flex;flex-direction:column;gap:8px;color:var(--black)}
+  .posts .photo{aspect-ratio:16/10;border-radius:4px;margin-bottom:8px}
+  .posts time{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+  .posts h2{font:900 26px/1.05 var(--head);text-transform:uppercase;color:var(--navy);margin:0}
+  .posts a:hover h2{text-decoration:underline}
+</style>

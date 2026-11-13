@@ -1,15 +1,12 @@
 name: Deploy to GitHub Pages
 
-# Builds the Astro site, then builds the VorTXObsidian notes (Quartz) into /docs/,
-# and publishes both together. Nothing deploys until a mentor sets the repository
+# Builds the site (including the programming notes at /docs/) and publishes it. Nothing deploys until a mentor sets the repository
 # variable PAGES_ENABLED to "true" (Settings > Secrets and variables > Actions > Variables)
 # and turns on GitHub Pages with "Source: GitHub Actions".
 on:
   push:
     branches: [main]
   workflow_dispatch:
-  repository_dispatch:
-    types: [docs-updated] # sent by VorTXObsidian when its notes change
 
 permissions:
   contents: read
@@ -32,19 +29,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-
-      - name: Check out the VorTXObsidian notes
-        uses: actions/checkout@v4
-        with:
-          repository: Vortx3735/VorTXObsidian
-          path: _docs
-          fetch-depth: 0 # Quartz uses git history for page dates
-      - name: Build the notes into dist/docs
-        working-directory: _docs
-        run: |
-          npm ci --legacy-peer-deps
-          sed -i 's#baseUrl: "[^"]*"#baseUrl: "vortx3735.org/docs"#' quartz.config.ts
-          npx quartz build -o ../dist/docs
 
       - uses: actions/upload-pages-artifact@v3
         with:

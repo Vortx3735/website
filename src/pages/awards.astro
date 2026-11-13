@@ -1,7 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import awards from '../data/awards.json';
+import { robots } from '../lib/content';
+// Awards are listed on each season's robot file in content/robots.
+const awards = (await robots()).flatMap((r) => r.data.awards.map((a) => {
+  const m = a.match(/^(.*?)\s*\((.*)\)$/);
+  return { year: r.data.year.slice(0, 4), award: m ? m[1] : a, detail: m ? m[2] : undefined };
+}));
 ---
 <Base title="Awards">
   <PageHead title="Awards" />

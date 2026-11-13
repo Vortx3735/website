@@ -9,8 +9,10 @@
     "fetch-media": "node scripts/fetch-wp-media.mjs"
   },
   "dependencies": {
+    "@astrojs/starlight": "^0.43.1",
     "@fontsource/libre-franklin": "^5.3.0",
     "@fontsource/montserrat": "^5.3.0",
-    "astro": "^5.18.2"
+    "astro": "^7.4.12",
+    "starlight-obsidian": "^0.15.0"
   }
 }

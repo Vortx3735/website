@@ -1,0 +1,22 @@
+---
+// Renders every Markdown page in content/pages (except home.md) at /<file name>/.
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Icon from '../components/Icon.astro';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('pages', (p) => p.id !== 'home');
+  return pages.map((p) => ({ params: { slug: p.id }, props: { p } }));
+}
+const { p } = Astro.props;
+const { Content } = await render(p);
+const { title, lead, description, button_label, button_link } = p.data;
+---
+<Base title={title} description={description ?? lead}>
+  <PageHead title={title} lead={lead} />
+  <section class="section light"><div class="wrap prose md">
+    <Content />
+    {button_label && button_link && <p class="cta"><a class="btn btn-dark" href={button_link}>{button_label} <Icon name="arrow" /></a></p>}
+  </div></section>
+</Base>

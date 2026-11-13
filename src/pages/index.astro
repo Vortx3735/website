@@ -1,41 +1,41 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import site from '../data/site.json';
-import robots from '../data/robots.json';
-import awards from '../data/awards.json';
-import sponsors from '../data/sponsors.json';
-import { wp, local } from '../lib/media';
+import { page, robots, sponsors, photo } from '../lib/content';
+import { existsSync } from 'node:fs';
 
-const current = robots[0];
-const yearAwards = awards.filter((a) => a.year === current.year).map((a) => a.award);
-const rail = robots.map((r) => ({
-  ...r,
-  img: wp(r.photos[0]),
-  award: awards.find((a) => r.year.startsWith(a.year) && !a.award.startsWith("Dean's List"))?.award,
-  long: r.year.length > 4,
+const home = (await page('home')).data as Record<string, string>;
+const all = await robots();
+const current = all[0].data;
+const rail = all.map((r) => ({
+  ...r.data,
+  img: photo('robots', r.data.photos[0]),
+  award: r.data.awards.find((a) => !a.startsWith("Dean's List")),
+  long: r.data.year.length > 4,
 }));
-const video = local(site.heroVideo);
-const poster = local(site.heroPoster);
-const named = sponsors.filter((s) => !s.name.includes('unknown') && s.name !== 'Klein Bots');
+// The time-lapse video and its still frame live in public/media/.
+const video = existsSync('public/media/build-season-timelapse.mp4') ? '/media/build-season-timelapse.mp4' : null;
+const poster = '/media/build-season-timelapse.jpg';
+const names = (await sponsors()).map((s) => s.data.name);
 ---
 <Base overlayHeader>
   <section class="hero">
     <div class="photo hero-media">
-      {poster && <img src={poster} alt="" fetchpriority="high">}
-      {video && <video autoplay muted loop playsinline preload="metadata" poster={poster ?? undefined} src={video}></video>}
+      <img src={poster} alt="" fetchpriority="high">
+      {video && <video autoplay muted loop playsinline preload="metadata" poster={poster} src={video}></video>}
       {video && <button class="vidctl" type="button" aria-label="Pause the time-lapse" aria-pressed="false">
         <svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>
         <svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3l8 5-8 5z"/></svg>
       </button>}
     </div>
     <div class="wrap hero-in">
-      <h1 class="h">We take the world <em>by storm</em></h1>
+      <h1 class="h">{home.headline} <em>{home.headline_highlight}</em></h1>
       <div class="plate">
         <dl>
           <dt>{current.year} robot</dt><dd>{current.name} · {current.game}</dd>
-          <dt>Named for</dt><dd>Alumnus Noah Lewis</dd>
-          {yearAwards.length > 0 && <><dt>Honors</dt><dd>{yearAwards.join(' · ')}</dd></>}
+          {home.robot_named_for && <><dt>Named for</dt><dd>{home.robot_named_for}</dd></>}
+          {current.awards.length > 0 && <><dt>Honors</dt><dd>{current.awards.join(' · ')}</dd></>}
         </dl>
         <div class="acts">
           <a class="btn btn-go" href="/join-us/">Join the team <Icon name="arrow" /></a>
@@ -48,13 +48,13 @@ const named = sponsors.filter((s) => !s.name.includes('unknown') && s.name !== '
   <section class="seasons">
     <div class="wrap">
       <div class="seasons-head">
-        <h2 class="h">Fifteen seasons, one team</h2>
-        <p>Klein Bots in 2011, VorTX since 2017. Every robot, every game. <a href="/robots/">See all robots</a></p>
+        <h2 class="h">{home.seasons_heading}</h2>
+        <p>{home.seasons_text} <a href="/robots/">See all robots</a></p>
       </div>
       <div class="rail" tabindex="0" aria-label="Robots by season, scroll sideways">
         {rail.map((r, i) => (
           <article class:list={['yr', { now: i === 0 }]}>
-            <div class="photo">{r.img && <img src={r.img} alt={`${r.name}, our ${r.year} robot`} loading="lazy">}</div>
+            <div class="photo">{r.img && <Image src={r.img} alt={`${r.name}, our ${r.year} robot`} width={480} />}</div>
             <div class="t">
               <b class:list={{ long: r.long }}>{r.year}</b>
               <h3>{r.name}</h3>
@@ -69,14 +69,14 @@ const named = sponsors.filter((s) => !s.name.includes('unknown') && s.name !== '
 
   <section class="asks">
     <div class="ask join">
-      <h2 class="h">Build with us</h2>
-      <p>No experience needed. Students from Klein High, Klein Cain, Klein Oak, Klein Collins and Klein Forest build, code, design and run outreach together.</p>
+      <h2 class="h">{home.join_heading}</h2>
+      <p>{home.join_text}</p>
       <a class="btn btn-dark" href="/join-us/">Join the team</a>
     </div>
     <div class="ask back">
-      <h2 class="h">Back the build</h2>
-      <p>Sponsors fund parts, travel and summer camps. See what your support makes possible in our sponsorship package.</p>
-      <ul class="sp">{named.map((s) => <li>{s.name}</li>)}</ul>
+      <h2 class="h">{home.sponsor_heading}</h2>
+      <p>{home.sponsor_text}</p>
+      <ul class="sp">{names.map((n) => <li>{n}</li>)}</ul>
       <a class="btn btn-go" href="/support-us/">Sponsor us</a>
     </div>
   </section>

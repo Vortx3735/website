@@ -1,20 +1,24 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import sponsors from '../data/sponsors.json';
-import { wp } from '../lib/media';
-const list = sponsors.map((s) => ({ ...s, img: wp(s.logo) }));
+import { sponsors, photo } from '../lib/content';
+const list = (await sponsors()).map((s) => ({ ...s.data, img: photo('sponsors', s.data.logo) }));
 ---
 <Base title="Sponsors">
   <PageHead title="Our sponsors" lead="Thank you. You make every season possible." />
   <section class="section light"><div class="wrap">
-    <ul class="logos">{list.map((s) => <li>{s.img ? <img src={s.img} alt={s.name} loading="lazy"> : <span>{s.name}</span>}</li>)}</ul>
+    <ul class="logos">{list.map((s) => {
+      const inner = s.img ? <Image src={s.img} alt={s.name} width={320} /> : <span>{s.name}</span>;
+      return <li>{s.website ? <a href={s.website}>{inner}</a> : inner}</li>;
+    })}</ul>
     <p class="more"><a class="btn btn-dark" href="/support-us/">Become a sponsor</a></p>
   </div></section>
 </Base>
 <style>
   .logos{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px}
   .logos li{background:var(--white);border:1px solid #e4e4e4;height:140px;display:grid;place-items:center;padding:20px;text-align:center;font-weight:700;color:var(--navy)}
+  .logos a{display:grid;place-items:center;width:100%;height:100%;text-decoration:none}
   .logos img{max-height:96px;width:auto;object-fit:contain}
   .more{margin-top:40px}
 </style>

@@ -5,7 +5,9 @@ import '@fontsource/montserrat/600.css';
 import '@fontsource/montserrat/700.css';
 import '@fontsource/libre-franklin/900.css';
 import '../styles/global.css';
-import site from '../data/site.json';
+import { settings, posts } from '../lib/content';
+const site = await settings();
+const hasBlog = (await posts()).length > 0;
 
 interface Props { title?: string; description?: string; overlayHeader?: boolean }
 const { title, description = 'FRC Team 3735 VorTX, the Klein ISD robotics team in Spring, Texas.', overlayHeader = false } = Astro.props;
@@ -16,6 +18,7 @@ const nav = [
   { href: '/awards/', label: 'Awards' },
   { href: '/join-us/', label: 'Join us' },
   { href: '/sponsors/', label: 'Sponsors' },
+  ...(hasBlog ? [{ href: '/blog/', label: 'Blog' }] : []),
   { href: '/calendar/', label: 'Calendar' },
 ];
 const path = Astro.url.pathname;
@@ -29,7 +32,7 @@ const path = Astro.url.pathname;
   <meta name="description" content={description}>
   <meta property="og:title" content={fullTitle}>
   <meta property="og:description" content={description}>
-  <meta property="og:image" content={new URL(site.heroPoster, Astro.site)}>
+  <meta property="og:image" content={new URL('/media/build-season-timelapse.jpg', Astro.site)}>
   <meta name="theme-color" content="#012131">
   <link rel="icon" href="/favicon.png">
 </head>
@@ -47,10 +50,10 @@ const path = Astro.url.pathname;
   <main id="main"><slot /></main>
   <footer class="site-footer">
     <div class="wrap cols">
-      <div><b>Visit</b>{site.address.map((l) => <span>{l}</span>)}</div>
+      <div><b>Visit</b><span>{site.address_line_1}</span><span>{site.address_line_2}</span><span>{site.address_line_3}</span></div>
       <div><b>Team</b><a href="/our-mission/">Mission</a><a href="/our-history/">History</a><a href="/leadership/">Leadership</a><a href="/coaches-mentors/">Coaches &amp; mentors</a></div>
       <div><b>Help</b><a href="/faq/">FAQ</a><a href="/contact-us/">Contact us</a><a href="/support-us/">Support us</a></div>
-      <div><b>Resources</b><a href={site.codeUrl}>Code</a><a href={site.brandGuideUrl}>Branding</a></div>
+      <div><b>Resources</b><a href="/docs/">Programming docs</a><a href={site.brand_guide_link}>Branding</a></div>
     </div>
     <div class="wrap legal">© 2011–{new Date().getFullYear()} FRC VorTX 3735. All rights reserved.</div>
   </footer>
