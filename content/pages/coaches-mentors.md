@@ -8,6 +8,7 @@ lead: "Teachers and volunteers who support the students."
 - Patrick Rivera
 - Tiara Woods
 - Elizabeth Wallace
+- Jared Foust
 
 ## Mentors
 
@@ -18,6 +19,5 @@ lead: "Teachers and volunteers who support the students."
 - Samantha T.
 - Kameela B.
 - James S.
-- Lino C.
 - Jack S.
 - James N.
