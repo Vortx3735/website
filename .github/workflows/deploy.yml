@@ -28,7 +28,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Tells the build where Pages serves the site: vortx3735.github.io/website/
+      # until a custom domain is set in Settings > Pages, then the domain root.
+      - id: pages
+        uses: actions/configure-pages@v5
       - run: npm run build
+        env:
+          SITE_ORIGIN: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
