@@ -1,24 +1,38 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import { robots } from '../lib/content';
+import { robots, parseAward } from '../lib/content';
 // Awards are listed on each season's robot file in content/robots.
-const awards = (await robots()).flatMap((r) => r.data.awards.map((a) => {
-  const m = a.match(/^(.*?)\s*\((.*)\)$/);
-  return { year: r.data.year.slice(0, 4), award: m ? m[1] : a, detail: m ? m[2] : undefined };
-}));
+const years = (await robots())
+  .filter((r) => r.data.awards.length > 0)
+  .map((r) => ({ year: r.data.year.slice(0, 4), awards: r.data.awards.map(parseAward) }));
+const first = years.at(-1)?.year ?? '2014';
+const last = years[0]?.year ?? '2026';
 ---
-<Base title="Awards">
-  <PageHead title="Awards" />
-  <section class="section"><div class="wrap">
-    <ul class="aw">{awards.map((a) => <li><b>{a.year}</b><span>{a.award}{a.detail && <small>{a.detail}</small>}</span></li>)}</ul>
+<Base title="Awards" description="Judged awards and event results from every VorTX season.">
+  <PageHead title="Hardware earned" eyebrow={`Awards / ${first} to ${last}`} lead="Judged awards and event results. Tags show the event level." />
+  <section class="section light after-head"><div class="wrap">
+    {years.map((y) => (
+      <div class="yr">
+        <div class="n">{y.year}</div>
+        <ul>{y.awards.map((a) => (
+          <li class:list={{ big: a.name.startsWith("Chairman") }}>
+            <span class="nm">{a.name}{a.detail && <small>{a.detail}</small>}</span>
+            {a.tier && <span class="tier">{a.tier}</span>}
+          </li>
+        ))}</ul>
+      </div>
+    ))}
   </div></section>
 </Base>
 <style>
-  .aw{list-style:none;columns:2;column-gap:56px}
-  .aw li{break-inside:avoid;display:flex;gap:20px;padding:14px 0;border-bottom:1px solid rgba(155,206,225,.2)}
-  .aw b{font:800 20px/1.4 var(--head);color:var(--green);min-width:3em;font-variant-numeric:tabular-nums}
-  .aw span{display:flex;flex-direction:column}
-  .aw small{color:var(--azure);font-size:16px}
-  @media (max-width:760px){.aw{columns:1}}
+  .yr{display:flex;flex-wrap:wrap;gap:12px 40px;border-top:4px solid var(--navy);padding:22px 0;align-items:flex-start}
+  .n{font:900 clamp(3.5rem,8vw,6rem)/.8 var(--head);color:var(--navy);flex:0 0 220px;font-variant-numeric:tabular-nums}
+  ul{list-style:none;flex:1 1 420px;display:grid;gap:10px}
+  li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:20px;font-weight:600}
+  .nm{display:flex;flex-direction:column}
+  small{font-size:15px;font-weight:400;color:var(--grey)}
+  li.big .nm{background:var(--green);color:var(--navy);font-weight:800;padding:4px 12px;flex-direction:row;gap:10px;align-items:baseline}
+  li.big small{color:var(--navy)}
+  .tier{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border:2px solid var(--navy);color:var(--navy);padding:2px 8px;white-space:nowrap}
 </style>

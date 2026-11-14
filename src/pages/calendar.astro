@@ -7,8 +7,8 @@ const site = await settings();
 const src = site.calendar_embed_link;
 ---
 <Base title="Calendar">
-  <PageHead title="Calendar" lead="Meetings, events and competitions." />
-  <section class="section light"><div class="wrap">
+  <PageHead title="On the calendar" lead="Meetings, Events, and Competitions." />
+  <section class="section light after-head"><div class="wrap">
     {src ? <div class="cal"><iframe src={src} title="VorTX team calendar" loading="lazy"></iframe></div>
          : <p>The calendar is being moved to the new site. Meeting times are on the <a href="/faq/">FAQ</a>.</p>}
   </div></section>

@@ -3,7 +3,7 @@ year: "2022"
 name: "Mantis"
 game: "Rapid React"
 awards:
-  - "Quality Award"
+  - "Quality Award [District]"
 photos:
   - "assets/P1011315-scaled.jpg"
   - "assets/image.jpg"

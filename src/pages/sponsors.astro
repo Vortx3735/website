@@ -6,8 +6,8 @@ import { sponsors, photo } from '../lib/content';
 const list = (await sponsors()).map((s) => ({ ...s.data, img: photo('sponsors', s.data.logo) }));
 ---
 <Base title="Sponsors">
-  <PageHead title="Our sponsors" lead="Thank you. You make every season possible." />
-  <section class="section light"><div class="wrap">
+  <PageHead title="Our Sponsors" lead="Our sponsors keep the shop running." />
+  <section class="section light after-head"><div class="wrap">
     <ul class="logos">{list.map((s) => {
       const inner = s.img ? <Image src={s.img} alt={s.name} width={320} /> : <span>{s.name}</span>;
       return <li class:list={{ linked: !!s.website }}>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{inner}<span class="go" aria-hidden="true">Visit site ↗</span></a> : inner}</li>;

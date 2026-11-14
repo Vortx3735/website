@@ -13,3 +13,19 @@ Meetings can change, but we announce changes in advance. See the [calendar](/cal
 ## Where are the meetings?
 
 In the Klein High garage: Klein High School, 16715 Stuebner Airline Rd, Spring, TX 77379.
+
+## Do I need experience?
+
+No. Mechanical, electrical, programming, design, business and outreach all start from zero.
+
+## Who can join?
+
+Students from any Klein ISD high school. Our members come from Klein High, Klein Cain, Klein Oak, Klein Collins and Klein Forest.
+
+## Can I visit before I sign up?
+
+Yes. Show up on a Friday and see how the team works.
+
+## Still have a question?
+
+Email [vortx3735inc@gmail.com](mailto:vortx3735inc@gmail.com).

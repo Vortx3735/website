@@ -8,7 +8,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', day: 'nu
 ---
 <Base title="Blog" description="News from FRC Team 3735 VorTX.">
   <PageHead title="Blog" lead="News from the shop, the field and the community." />
-  <section class="section light"><div class="wrap">
+  <section class="section light after-head"><div class="wrap">
     {list.length === 0 ? <p>No posts yet.</p> : (
       <ul class="posts">
         {list.map((p) => (

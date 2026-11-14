@@ -15,8 +15,47 @@ const { title, lead, description, button_label, button_link } = p.data;
 ---
 <Base title={title} description={description ?? lead}>
   <PageHead title={title} lead={lead} />
-  <section class="section light"><div class="wrap prose md">
+  <section class="section light after-head"><div class="wrap prose md" class:list={{ cards: p.id === 'leadership', faq: p.id === 'faq', wide: p.id === 'leadership' }}>
     <Content />
     {button_label && button_link && <p class="cta"><a class="btn btn-dark" href={button_link}>{button_label} <Icon name="arrow" /></a></p>}
   </div></section>
 </Base>
+
+<script>
+  // FAQ: turn each "## question" and its answer into an accordion that eases open.
+  const faq = document.querySelector('.md.faq');
+  if (faq) {
+    [...faq.querySelectorAll('h2')].forEach((h) => {
+      const d = document.createElement('details');
+      const s = document.createElement('summary');
+      s.textContent = h.textContent;
+      d.append(s);
+      let n = h.nextElementSibling;
+      while (n && n.tagName !== 'H2') { const next = n.nextElementSibling; d.append(n); n = next; }
+      h.replaceWith(d);
+    });
+    faq.classList.add('ready');
+  }
+</script>
+
+<style>
+  .wide{max-width:none}
+  /* Leadership: the list becomes centered cards. */
+  .cards :global(ul){list-style:none;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+  .cards :global(li){margin:0;background:var(--navy);color:var(--white);border-left:6px solid var(--green);padding:12px 18px;min-width:210px;font:700 13px/1.2 var(--body);letter-spacing:.12em;text-transform:uppercase;transition:transform .25s,box-shadow .25s}
+  .cards :global(li strong){display:block;font:900 34px/1.1 var(--head);letter-spacing:0;text-transform:none;margin-bottom:2px}
+  .cards :global(li:hover){transform:translate(-6px,-6px);box-shadow:12px 12px 0 var(--green)}
+  /* FAQ accordion */
+  .faq.ready{max-width:960px}
+  .faq :global(details){border-bottom:4px solid var(--navy);padding:20px 0;interpolate-size:allow-keywords}
+  .faq :global(details:first-of-type){border-top:4px solid var(--navy)}
+  .faq :global(summary){cursor:pointer;list-style:none;font:900 clamp(1.5rem,3vw,2.2rem)/1.1 var(--head);color:var(--navy);transition:padding-left .3s}
+  .faq :global(summary::-webkit-details-marker){display:none}
+  .faq :global(summary::after){content:"+";float:right;color:var(--green);transition:transform .35s}
+  .faq :global(details[open] summary::after){transform:rotate(45deg)}
+  .faq :global(summary:hover){padding-left:12px}
+  .faq :global(details > :not(summary)){max-width:720px;margin-top:12px}
+  .faq :global(details::details-content){block-size:0;overflow:hidden;opacity:0;transition:block-size .45s cubic-bezier(.2,.8,.2,1),opacity .35s,content-visibility .45s allow-discrete}
+  .faq :global(details[open]::details-content){block-size:auto;opacity:1}
+  @media (prefers-reduced-motion:reduce){.faq :global(details::details-content),.faq :global(summary),.faq :global(summary::after),.cards :global(li){transition:none}}
+</style>

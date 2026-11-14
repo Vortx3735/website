@@ -3,7 +3,7 @@ year: "2017"
 name: "Tempest"
 game: "Steamworks"
 awards:
-  - "Newton Subdivision Finalists"
+  - "Newton Subdivision Finalists [Championship]"
 photos:
   - "assets/hubCityRegional2017_132-scaled.jpg"
   - "assets/hubCityRegional2017_155-scaled.jpg"

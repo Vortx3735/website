@@ -3,9 +3,9 @@ year: "2018"
 name: "Valkyrie"
 game: "Power Up"
 awards:
-  - "Entrepreneurship Award (Lone Star South Regional)"
-  - "Safety Award (Lone Star Central Regional)"
-  - "Entrepreneurship Award"
+  - "Entrepreneurship Award (Lone Star South Regional) [Regional]"
+  - "Safety Award (Lone Star Central Regional) [Regional]"
+  - "Entrepreneurship Award [Regional]"
 photos:
   - "assets/5D3_3459-scaled.jpg"
   - "assets/IMG_3236-scaled.jpg"

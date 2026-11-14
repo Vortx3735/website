@@ -18,7 +18,7 @@ const date = p.data.date.toLocaleDateString('en-US', { month: 'long', day: 'nume
       <p class="meta"><time datetime={p.data.date.toISOString()}>{date}</time>{p.data.author && <> · {p.data.author}</>}</p>
       <h1 class="h">{p.data.title}</h1>
     </div></header>
-    <section class="section light"><div class="wrap prose md">
+    <section class="section light after-head"><div class="wrap prose md">
       {img && <Image src={img} alt="" width={1200} class="cover" />}
       <Content />
       <p class="back"><a href="/blog/">All posts</a></p>

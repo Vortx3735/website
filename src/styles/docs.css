@@ -1,9 +1,14 @@
-/* VorTX brand for the /docs/ section (Starlight). */
-@import '@fontsource/montserrat/400.css';
-@import '@fontsource/montserrat/600.css';
+/* VorTX brand for the /docs/ section (Starlight): Futura LT body, Franklin headlines, navy header with the green rule. */
 @import '@fontsource/libre-franklin/800.css';
+@import '@fontsource/libre-franklin/900.css';
+@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Light.ttf") format("truetype");font-weight:300;font-display:swap}
+@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Book.ttf") format("truetype");font-weight:400 500;font-display:swap}
+@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Bold.ttf") format("truetype");font-weight:600 700;font-display:swap}
+@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-ExtraBold.ttf") format("truetype");font-weight:800;font-display:swap}
+@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Heavy.ttf") format("truetype");font-weight:900;font-display:swap}
 :root{
-  --sl-font:Montserrat,sans-serif;
+  --sl-font:"Futura LT",Arial,sans-serif;
+  --vx-head:"Franklin Gothic Heavy","Libre Franklin",sans-serif;
 }
 :root[data-theme='dark']{
   --sl-color-accent-low:#012131;
@@ -19,7 +24,9 @@
   --sl-color-accent-high:#00334C;
   --sl-color-white:#000000;
 }
-.sl-markdown-content h1,.content-panel h1{font-family:"Franklin Gothic Heavy","Libre Franklin",sans-serif;font-weight:800;letter-spacing:-.01em}
-/* The white logotype only goes on dark, so the header stays navy in both themes. */
-header.header{background:#012131;color:#FFFFFF;--sl-color-black:#012131;--sl-color-white:#FFFFFF;--sl-color-gray-1:#FFFFFF;--sl-color-gray-2:#BCBCBC;--sl-color-gray-3:#BCBCBC;--sl-color-gray-4:#787878;--sl-color-gray-5:#00334C;--sl-color-gray-6:#00334C;--sl-color-accent-low:#012131;--sl-color-accent:#7FC241;--sl-color-accent-high:#9BCEE1}
+.sl-markdown-content h1,.sl-markdown-content h2,.sl-markdown-content h3,.content-panel h1,h1#_top{font-family:var(--vx-head);font-weight:900;letter-spacing:-.01em}
+h1#_top{text-transform:uppercase}
+/* The white logotype only goes on dark, so the header stays navy in both themes, with the same green rule as the main site. */
+header.header{background:#00334C;color:#FFFFFF;border-bottom:0;box-shadow:0 4px 0 #7FC241;--sl-color-black:#00334C;--sl-color-white:#FFFFFF;--sl-color-gray-1:#FFFFFF;--sl-color-gray-2:#BCBCBC;--sl-color-gray-3:#BCBCBC;--sl-color-gray-4:#787878;--sl-color-gray-5:#012131;--sl-color-gray-6:#012131;--sl-color-accent-low:#012131;--sl-color-accent:#7FC241;--sl-color-accent-high:#9BCEE1}
 header.header a, header.header button{color:#FFFFFF}
+.sidebar-content a[aria-current='page']{background:#7FC241;color:#00334C;font-weight:700}

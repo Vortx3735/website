@@ -58,7 +58,9 @@ export default defineConfig({
         starlightObsidian({ vault: './content', root: 'docs', output: 'docs' }),
       ],
       sidebar: [
-        { label: 'Back to vortx3735.org', link: '/' },
+        { label: 'vortx3735.org home', link: '/' },
+        { label: 'All resources', link: '/resources/' },
+        { label: 'Robots', link: '/robots/' },
         { label: 'Programming notes', items: [obsidianSidebarEntries] },
       ],
     }),

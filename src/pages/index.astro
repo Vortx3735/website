@@ -2,68 +2,83 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { page, robots, sponsors, photo } from '../lib/content';
+import Rings from '../components/Rings.astro';
+import { page, robots, sponsors, photo, settings, parseAward } from '../lib/content';
 import { existsSync } from 'node:fs';
 
 const home = (await page('home')).data as Record<string, string>;
+const site = await settings();
 const all = await robots();
-const current = all[0].data;
-const rail = all.map((r) => ({
-  ...r.data,
-  img: photo('robots', r.data.photos[0]),
-  award: r.data.awards.find((a) => !a.startsWith("Dean's List")),
-  long: r.data.year.length > 4,
-}));
+const current = all[0];
+const currentImg = photo('robots', current.data.photos[0]);
+// Awards ticker: judged awards and results since 2019, newest first.
+const ticker = all.filter((r) => Number(r.data.year.slice(0, 4)) >= 2019).flatMap((r) =>
+  r.data.awards.map(parseAward).map((a) => `${r.data.year.slice(0, 4)} ${a.name}${a.detail ? ` (${a.detail})` : ''}`));
+const shots = all.slice(0, 6).map((r) => ({ img: photo('robots', r.data.photos[0]), name: r.data.name, year: r.data.year.slice(0, 4) })).filter((s) => s.img);
 // The time-lapse video and its still frame live in public/media/.
 const video = existsSync('public/media/build-season-timelapse.mp4') ? '/media/build-season-timelapse.mp4' : null;
 const poster = '/media/build-season-timelapse.jpg';
 const sponsorList = (await sponsors()).map((s) => s.data);
+const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
 ---
-<Base overlayHeader>
+<Base>
   <section class="hero">
     <div class="photo hero-media">
       <img src={poster} alt="" fetchpriority="high">
       {video && <video autoplay muted loop playsinline preload="metadata" poster={poster} src={video}></video>}
-      {video && <button class="vidctl" type="button" aria-label="Pause the time-lapse" aria-pressed="false">
-        <svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>
-        <svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3l8 5-8 5z"/></svg>
-      </button>}
     </div>
+    <div class="storm" aria-hidden="true"><div class="glow"></div><Rings /></div>
     <div class="wrap hero-in">
-      <h1 class="display">{home.headline} <em>{home.headline_highlight}</em></h1>
-      <div class="plate">
-        <dl>
-          <dt>{current.year} robot</dt><dd>{current.name} · {current.game}</dd>
-          {home.robot_named_for && <><dt>Named for</dt><dd>{home.robot_named_for}</dd></>}
-          {current.awards.length > 0 && <><dt>Honors</dt><dd>{current.awards.join(' · ')}</dd></>}
-        </dl>
-        <div class="acts">
-          <a class="btn btn-go" href="/join-us/">Join the team <Icon name="arrow" /></a>
-          <a class="btn btn-line" href="/support-us/">Sponsor us</a>
-        </div>
+      <img class="tri" src="/images/triangle-white.png" alt="" width="102" height="88">
+      <p class="eyebrow">Team 3735 · Klein, Texas · Since 2011</p>
+      <h1 class="outline reveal">{home.headline} <em>{home.headline_highlight}</em></h1>
+      <div class="acts"><a class="btn btn-go" href="/join-us/">Student sign up <Icon name="arrow" /></a></div>
+    </div>
+    {video && <button class="vidctl" type="button" aria-label="Pause the time-lapse" aria-pressed="false">
+      <svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>
+      <svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3l8 5-8 5z"/></svg>
+    </button>}
+  </section>
+
+  <div class="band" aria-label="Awards">
+    <div class="tilt"><div class="run">
+      <span>{ticker.map((t) => <>{t} // </>)}</span>
+      <span aria-hidden="true">{ticker.map((t) => <>{t} // </>)}</span>
+    </div></div>
+  </div>
+
+  <section class="count" data-kickoff={site.kickoff_iso} aria-label="Countdown to kickoff">
+    <div class="wrap in">
+      <div class="lbl"><p class="eyebrow">2027 season</p><div class="h big">Kickoff in</div>{site.kickoff_label && <p class="when">{site.kickoff_label}</p>}</div>
+      <div class="tiles">
+        {['days', 'hours', 'minutes', 'seconds'].map((u) => <div class="tile"><div class="num" data-unit={u}>00</div><div class="u">{u}</div></div>)}
       </div>
     </div>
   </section>
 
-  <section class="seasons">
+  <section class="robot light">
     <div class="wrap">
-      <div class="seasons-head">
-        <h2 class="h">{home.seasons_heading}</h2>
-        <p>{home.seasons_text} <a href="/robots/">See all robots</a></p>
+      <div class="pic"><div class="photo">{currentImg && <Image src={currentImg} alt={`${current.data.name}, our ${current.data.year} robot`} width={1000} />}</div></div>
+      <div class="card">
+        <p class="eyebrow">{home.robot_dedication}</p>
+        <h2 class="h">{current.data.name}</h2>
+        <p class="game">{current.data.year} · {current.data.game}</p>
+        <a class="more" href="/robots/">{home.robot_link_label} <Icon name="arrow" /></a>
       </div>
-      <div class="rail" tabindex="0" aria-label="Robots by season, scroll sideways">
-        {rail.map((r, i) => (
-          <article class:list={['yr', { now: i === 0 }]}>
-            <div class="photo">{r.img && <Image src={r.img} alt={`${r.name}, our ${r.year} robot`} width={480} />}</div>
-            <div class="t">
-              <b class:list={{ long: r.long }}>{r.year}</b>
-              <h3>{r.name}</h3>
-              <small>{r.game}</small>
-              {r.award && <div class="aw"><Icon name="trophy" />{r.award}</div>}
-            </div>
-          </article>
-        ))}
-      </div>
+    </div>
+  </section>
+
+  <section class="schools light">
+    <div class="wrap">
+      <h2 class="h">{schoolsA}{schoolsB.length > 0 && <>,<br><span>{schoolsB.join(',').trim()}</span></>}</h2>
+      <p>{home.schools_text}</p>
+    </div>
+  </section>
+
+  <section class="strip light">
+    <div class="wrap">
+      <div class="strip-head"><h2 class="h">{home.gallery_heading}</h2><a class="more" href="/gallery/">All photos <Icon name="arrow" /></a></div>
+      <ul>{shots.map((s) => <li class="photo"><Image src={s.img} alt={`${s.name}, our ${s.year} robot`} width={420} /></li>)}</ul>
     </div>
   </section>
 
@@ -94,46 +109,78 @@ const sponsorList = (await sponsors()).map((s) => s.data);
     if (reduce.matches) { vid.pause(); vid.removeAttribute('autoplay'); set(true); }
     btn.addEventListener('click', () => { if (vid.paused) { vid.play(); set(false); } else { vid.pause(); set(true); } });
   }
+  // Countdown to kickoff: reads the date from content/settings.md (kickoff_iso).
+  const box = document.querySelector<HTMLElement>('[data-kickoff]');
+  const target = Date.parse(box?.dataset.kickoff ?? '');
+  if (box && !Number.isNaN(target)) {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const tick = () => {
+      const sec = Math.max(0, Math.floor((target - Date.now()) / 1000));
+      const v: Record<string, number> = { days: Math.floor(sec / 86400), hours: Math.floor((sec % 86400) / 3600), minutes: Math.floor((sec % 3600) / 60), seconds: sec % 60 };
+      for (const k in v) { const e = box.querySelector(`[data-unit="${k}"]`); if (e) e.textContent = k === 'days' && v.days > 99 ? String(v.days) : pad(v[k]); }
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
 </script>
 
 <style>
-  .hero{min-height:min(100svh,960px);display:grid;align-items:end;position:relative;padding-top:120px}
+  .eyebrow{font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--green)}
+  /* Hero. The bottom edge is slanted; everything below it overlaps the slant. */
+  .hero{position:relative;overflow:hidden;min-height:min(92svh,860px);display:grid;align-items:end;clip-path:polygon(0 0,100% 0,100% calc(100% - var(--s)),0 100%);padding-bottom:calc(var(--s) + 24px)}
   .hero-media{position:absolute;inset:0}
   .hero-media img,.hero-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(1,33,49,.8) 0%,rgba(1,33,49,.55) 30%,rgba(1,33,49,.7) 60%,rgba(1,33,49,.96) 100%)}
-  .vidctl{position:absolute;z-index:2;right:var(--gutter);bottom:20px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(1,33,49,.72);color:var(--white);display:grid;place-items:center;cursor:pointer;transition:background .3s var(--ease),color .3s var(--ease)}
+  .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,51,76,.8) 0%,rgba(0,51,76,.7) 50%,rgba(1,33,49,.96) 100%)}
+  .storm{position:absolute;right:-270px;top:-80px;width:900px;aspect-ratio:1;pointer-events:none}
+  .glow{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0%,rgba(127,194,65,.5) 50%,transparent 100%);-webkit-mask:radial-gradient(circle,transparent 24%,#000 40%,#000 52%,transparent 68%);mask:radial-gradient(circle,transparent 24%,#000 40%,#000 52%,transparent 68%);animation:spin 14s linear infinite}
+  .storm :global(.rings){position:absolute;inset:14.5%;width:71%;height:71%;animation:spin 36s linear infinite;opacity:.95}
+  .vidctl{position:absolute;z-index:3;right:var(--gutter);bottom:calc(var(--s) + 20px);width:44px;height:44px;border-radius:50%;border:0;background:rgba(1,33,49,.72);color:var(--white);display:grid;place-items:center;cursor:pointer;transition:background .3s,color .3s}
   .vidctl:hover{background:var(--green);color:var(--deep)}
   .vidctl svg{width:16px;height:16px;grid-area:1/1}
   .vidctl .i-play,.vidctl[aria-pressed="true"] .i-pause{display:none}
   .vidctl[aria-pressed="true"] .i-play{display:block}
-  .hero-in{position:relative;z-index:1;padding:0 0 72px;display:grid;grid-template-columns:1.4fr 1fr;gap:48px;align-items:end}
-  .hero h1{font-size:clamp(3rem,7vw,6rem);line-height:1}
-  .hero h1 em{font-style:normal;color:var(--green)}
-  .plate{border-top:2px solid var(--green);padding-top:18px}
-  .plate dl{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:18px;margin-bottom:24px}
-  .plate dt{color:var(--azure);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:14px;padding-top:2px}
-  .acts{display:flex;gap:12px;flex-wrap:wrap}
-  .seasons{padding:96px 0 80px;background:var(--navy)}
-  .seasons-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:36px}
-  .seasons h2{font-size:clamp(2.2rem,4vw,3.5rem)}
-  .seasons-head p{max-width:42ch;color:var(--azure)}
-  .seasons-head a{color:var(--white);font-weight:600}
-  .rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);grid-template-rows:auto auto auto auto 1fr;column-gap:2px;row-gap:0;overflow-x:auto;padding-bottom:14px;scroll-snap-type:x mandatory;overscroll-behavior-x:contain}
-  /* Each card shares the rail's rows (subgrid), so years, names, games and awards line up across cards. */
-  .yr{scroll-snap-align:start;background:var(--deep);display:grid;grid-row:span 5;grid-template-rows:subgrid}
-  .yr .photo{aspect-ratio:4/5}
-  .yr .t{display:contents}
-  .yr .t > *{padding-inline:18px}
-  .yr b{padding-top:18px}
-  .yr h3{margin-top:6px}
-  .yr b{font:400 44px/1 var(--display);color:var(--green);font-synthesis:none;font-variant-numeric:tabular-nums}
-  .yr b.long{font-size:32px;line-height:44px}
-  .yr h3{font:800 22px/1.1 var(--head)}
-  .yr small{font-size:16px;color:var(--azure);margin-top:6px;line-height:1.5}
-  .yr .aw{align-self:start;padding-top:14px;padding-bottom:22px;line-height:1.5;font-size:15px;font-weight:600;color:var(--cream);display:flex;gap:8px;align-items:flex-start}
-  .yr .aw :global(svg){flex:none;width:14px;height:14px;margin-top:2px;color:var(--green)}
-  .yr.now{box-shadow:inset 0 3px 0 var(--green)}
-  .yr.now b{color:var(--white)}
+  .hero-in{position:relative;z-index:1;padding-top:120px}
+  .tri{width:102px;height:auto;margin-bottom:20px}
+  .hero-in .eyebrow{margin-bottom:16px}
+  .hero h1{font-size:clamp(4rem,12.5vw,11rem);-webkit-text-stroke:3px var(--white);margin-bottom:34px}
+  /* Awards band. The text is tilted to the same angle as the strip, at every width. */
+  .band{position:relative;z-index:2;background:var(--green);color:var(--navy);margin-top:calc(var(--s) * -1);padding:calc(var(--s) * .95) 0;clip-path:polygon(0 var(--s),100% 0,100% calc(100% - var(--s)),0 100%)}
+  .tilt{overflow:hidden;padding:16px 0;width:110%;margin-left:-5%;transform:rotate(-2.862deg)}
+  .run{display:flex;width:max-content;font:900 clamp(1.4rem,2.4vw,2.1rem)/1.2 var(--head);text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;animation:run 60s linear infinite}
+  .run span{padding-right:48px}
+  @keyframes run{to{transform:translateX(-50%)}}
+  /* Countdown: slanted top, flat bottom, timer sits on the bottom edge. */
+  .count{position:relative;z-index:1;background:var(--navy);margin-top:calc(var(--s) * -1);padding-top:calc(var(--s) + 40px);clip-path:polygon(0 var(--s),100% 0,100% 100%,0 100%)}
+  .count .in{display:flex;flex-wrap:wrap;gap:24px 40px;align-items:flex-end;justify-content:space-between}
+  .count .big{font-size:clamp(3.5rem,7vw,6.25rem);text-transform:uppercase;line-height:.9}
+  .when{margin-top:10px;font-size:15px}
+  .tiles{display:flex;flex-wrap:wrap;gap:10px}
+  .tile{background:var(--white);color:var(--navy);padding:14px 22px;min-width:104px;text-align:center}
+  .num{font:900 56px/.95 var(--head);font-variant-numeric:tabular-nums}
+  .u{font-weight:800;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+  /* Robot card */
+  .robot{padding:80px 0 72px}
+  .robot .wrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:0}
+  .robot .pic{position:relative;max-width:900px}
+  .robot .pic::before{content:"";position:absolute;left:-16px;top:-16px;right:40px;bottom:40px;background:var(--green)}
+  .robot .photo{position:relative;aspect-ratio:3/2;margin:16px 0 0 16px}
+  .card{position:relative;margin-left:-90px;background:var(--navy);color:var(--white);padding:44px}
+  .card h2{color:var(--white);font-size:clamp(3rem,6vw,5.5rem);text-transform:uppercase;margin:10px 0 8px}
+  .game{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:15px;margin-bottom:18px}
+  .more{color:var(--green);font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:14px;text-decoration:none;display:inline-flex;gap:.6em;align-items:center}
+  .more :global(svg){width:16px;height:16px}
+  .light .more{color:var(--navy)}
+  .card .more{color:var(--green)}
+  .schools{padding:24px 0 88px}
+  .schools .wrap{display:flex;flex-wrap:wrap;gap:32px 48px;align-items:flex-end;justify-content:space-between}
+  .schools h2{flex:1 1 520px;font-size:clamp(3.5rem,8vw,8rem);text-transform:uppercase;line-height:.86;color:var(--navy)}
+  .schools h2 span{background:var(--green);padding:0 14px}
+  .schools p{flex:1 1 380px;max-width:520px;font-size:19px;color:var(--black)}
+  .strip{padding:0 0 88px}
+  .strip-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:28px}
+  .strip h2{font-size:clamp(2.6rem,5vw,4.5rem);text-transform:uppercase;color:var(--navy)}
+  .strip ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+  .strip li{aspect-ratio:4/3;border-bottom:6px solid var(--green)}
   .asks{display:grid;grid-template-columns:1fr 1fr}
   .ask{padding:88px 64px;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
   .ask.join{padding-left:max(16px,calc((100vw - 1240px)/2));background:var(--cream);color:var(--black)}
@@ -144,11 +191,20 @@ const sponsorList = (await sponsors()).map((s) => s.data);
   .sp{list-style:none;display:flex;flex-wrap:wrap;gap:10px 26px;font-weight:700;font-size:18px;color:var(--lgrey)}
   .sp a{color:inherit;text-decoration:underline;text-decoration-color:rgba(188,188,188,.4);text-underline-offset:.25em}
   .sp a:hover{color:var(--green);text-decoration-color:currentColor}
-  @media (max-width:860px){
-    .hero-in{grid-template-columns:1fr;gap:28px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (max-width:1000px){
+    .hero,.band,.count{clip-path:none;margin-top:0;padding-bottom:40px}
+    .hero{padding-bottom:56px}
+    .band{padding:12px 0}
+    .tilt{transform:none;width:auto;margin-left:0}
+    .count{padding-top:48px}
+    .robot .wrap{grid-template-columns:1fr}
+    .card{margin:-40px 0 0 24px}
     .asks{grid-template-columns:1fr}
     .ask,.ask.join,.ask.back{padding:64px var(--gutter)}
-    .seasons-head{flex-direction:column;align-items:flex-start}
+    .glow,.storm :global(.rings),.run{animation:none}
+    .vidctl{bottom:20px}
   }
+  @media (prefers-reduced-motion:reduce),(pointer:coarse){.glow,.storm :global(.rings),.run{animation:none}}
   @media (prefers-reduced-motion:reduce){.hero-media video{display:none}}
 </style>

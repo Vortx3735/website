@@ -41,3 +41,11 @@ export async function page(id: string) {
   if (!p) throw new Error(`Missing content/pages/${id}.md`);
   return p;
 }
+
+/** An award line in a robot note: "Name (detail) [Tier]". The detail and the [Tier] are both optional. */
+export function parseAward(raw: string) {
+  const tier = raw.match(/\s*\[([^\]]+)\]\s*$/)?.[1] ?? null;
+  const rest = raw.replace(/\s*\[[^\]]+\]\s*$/, '');
+  const m = rest.match(/^(.*?)\s*\((.*)\)$/);
+  return { name: m ? m[1] : rest, detail: m ? m[2] : null, tier };
+}

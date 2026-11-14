@@ -8,7 +8,7 @@ description: "VorTX 3735 programming docs, robot code, brand guide and sponsorsh
 
 - **[Programming docs](/docs/)**: how our robot code is organized, subsystems, commands, AutoAim and simulation.
 - **[Our code on GitHub](https://github.com/Vortx3735)**: every season's robot code.
-- **[Brand guide](https://drive.google.com/file/d/15kdqpQoUk89nF5z68MN7_vn96tGhMB9w/view)**: logos, colors and fonts.
+- **[Brand guide](https://drive.google.com/file/d/15kdqpQoUk89nF5z68MN7_vn96tGhMB9w/view)**: logos, colors and usage rules.
 
 ## For sponsors and families
 

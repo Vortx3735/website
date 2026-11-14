@@ -3,8 +3,8 @@ year: "2016"
 name: "Sabre"
 game: "Stronghold"
 awards:
-  - "Regional Winners (Lone Star Regional)"
-  - "Regional Finalists (Dallas Regional)"
+  - "Regional Winners (Lone Star Regional) [Regional]"
+  - "Regional Finalists (Dallas Regional) [Regional]"
 photos:
   - "assets/IMG_8263-scaled.jpg"
   - "assets/IMG_7551-scaled.jpg"
