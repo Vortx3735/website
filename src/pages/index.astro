@@ -5,13 +5,15 @@ import Icon from '../components/Icon.astro';
 import { page, robots, sponsors, photo } from '../lib/content';
 import { existsSync } from 'node:fs';
 
+// Awards are written "Name (Event)"; the homepage shows just the name.
+const short = (a?: string) => a?.replace(/\s*\([^)]*\)\s*$/, '');
 const home = (await page('home')).data as Record<string, string>;
 const all = await robots();
 const current = all[0].data;
 const rail = all.map((r) => ({
   ...r.data,
   img: photo('robots', r.data.photos[0]),
-  award: r.data.awards.find((a) => !a.startsWith("Dean's List")),
+  award: short(r.data.awards.find((a) => !a.startsWith("Dean's List"))),
   long: r.data.year.length > 4,
 }));
 // The time-lapse video and its still frame live in public/media/.
@@ -35,7 +37,7 @@ const sponsorList = (await sponsors()).map((s) => s.data);
         <dl>
           <dt>{current.year} robot</dt><dd>{current.name} · {current.game}</dd>
           {home.robot_named_for && <><dt>Named for</dt><dd>{home.robot_named_for}</dd></>}
-          {current.awards.length > 0 && <><dt>Honors</dt><dd>{current.awards.join(' · ')}</dd></>}
+          {current.awards.length > 0 && <><dt>Honors</dt><dd>{current.awards.map(short).join(' · ')}</dd></>}
         </dl>
         <div class="acts">
           <a class="btn btn-go" href="/join-us/">Join the team <Icon name="arrow" /></a>
