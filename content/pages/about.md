@@ -8,4 +8,12 @@ VorTX 3735 was founded in 2011 by 11 students as “Klein Bots.” In 2017 we re
 
 We work to engage, encourage and educate in STEM (science, technology, engineering and math), for our members and for our community. Through student-led outreach like summer camps, demos and volunteer events, VorTX sets out to make an impact and inspire everyone. The only way we can do that is by taking the world by storm.
 
+## Our mission
+
+To provide youth with the opportunity to grow into tomorrow’s leading engineers and scientists.
+
+To create a warm environment where seeds of teamwork and professionalism are sown and nurtured.
+
+To encourage members of our team to remain involved with their community, sharing their knowledge while gaining real-world experience.
+
 [Our mission](/our-mission/) · [Our history](/our-history/) · [Leadership](/leadership/) · [Coaches & mentors](/coaches-mentors/)

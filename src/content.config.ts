@@ -63,6 +63,7 @@ const settings = defineCollection({
     brand_guide_link: z.string(),
     calendar_embed_link: z.string().nullish(),
     contact_form_link: z.string().nullish(),
+    calendar_add_link: z.string().nullish(),
     email: z.string().default('vortx3735inc@gmail.com'),
     instagram_link: z.string().nullish(),
     youtube_link: z.string().nullish(),
