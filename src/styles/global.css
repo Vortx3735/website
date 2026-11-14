@@ -5,11 +5,14 @@
   --grey:#787878; --lgrey:#BCBCBC; --azure:#9BCEE1; --cream:#F0EBD9;
   /* Headlines: Franklin Gothic Heavy where installed, Libre Franklin 900 on the web. */
   --head:"Franklin Gothic Heavy","Libre Franklin",sans-serif;
+  /* VorTX Display: the team's own face. Accent only (hero line, season years). */
+  --display:"VorTX Display","Franklin Gothic Heavy","Libre Franklin",sans-serif;
   --body:Montserrat,sans-serif;
   --ease:cubic-bezier(.16,1,.3,1);
   --gutter:max(16px,env(safe-area-inset-left,0px));
   color-scheme:dark;
 }
+@font-face{font-family:"VorTX Display";src:url("../assets/fonts/VorTXDisplay-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scrollbar-color:var(--green) var(--deep)}
 body{font-family:var(--body);font-size:clamp(1.0625rem,.95rem + .35vw,1.1875rem);background:var(--deep);color:var(--white);line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -19,13 +22,14 @@ a{color:inherit;text-underline-offset:.2em}
 img,video{display:block;max-width:100%}
 .skip{position:absolute;left:-9999px;top:8px;z-index:100;background:var(--green);color:var(--deep);padding:10px 14px;font-weight:700}
 .skip:focus{left:16px}
-.h{font-family:var(--head);font-weight:900;text-transform:uppercase;letter-spacing:-.01em;line-height:.95;text-wrap:balance}
+.h{font-family:var(--head);font-weight:800;letter-spacing:-.015em;line-height:1;text-wrap:balance}
+.display{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:0;line-height:1;text-wrap:balance;font-synthesis:none}
 .wrap{width:min(1240px,100% - 32px);margin-inline:auto}
 .prose{max-width:68ch}
 .prose p+p{margin-top:1em}
 .photo{position:relative;overflow:hidden;background:linear-gradient(160deg,#0b4a68 0%,var(--navy) 45%,var(--deep) 100%)}
 .photo img{width:100%;height:100%;object-fit:cover}
-.btn{display:inline-flex;align-items:center;gap:.6em;font:700 16px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;padding:16px 26px;border-radius:4px;min-height:44px;transition:background .3s var(--ease),color .3s var(--ease)}
+.btn{display:inline-flex;align-items:center;gap:.6em;font:700 16px/1 var(--body);letter-spacing:.01em;text-decoration:none;padding:16px 26px;border-radius:4px;min-height:44px;transition:background .3s var(--ease),color .3s var(--ease)}
 .btn svg{width:16px;height:16px;transition:transform .3s var(--ease)}
 .btn:hover svg{transform:translateX(4px)}
 .btn-go{background:var(--green);color:var(--deep)}
@@ -46,7 +50,7 @@ img,video{display:block;max-width:100%}
 .light a:not(.btn),.cream a:not(.btn){color:var(--navy);font-weight:600}
 /* Markdown content */
 .md > * + *{margin-top:1em}
-.md h2{font:900 clamp(1.6rem,3vw,2.2rem)/1 var(--head);text-transform:uppercase;color:var(--navy);margin-top:1.6em}
+.md h2{font:800 clamp(1.6rem,3vw,2.2rem)/1.05 var(--head);letter-spacing:-.015em;color:var(--navy);margin-top:1.6em}
 .md h3{font-size:1.2rem;margin-top:1.4em;color:var(--navy)}
 .md h2:first-child,.md h3:first-child{margin-top:0}
 .md ul,.md ol{padding-left:1.4em}

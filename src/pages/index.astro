@@ -30,7 +30,7 @@ const sponsorList = (await sponsors()).map((s) => s.data);
       </button>}
     </div>
     <div class="wrap hero-in">
-      <h1 class="h">{home.headline} <em>{home.headline_highlight}</em></h1>
+      <h1 class="display">{home.headline} <em>{home.headline_highlight}</em></h1>
       <div class="plate">
         <dl>
           <dt>{current.year} robot</dt><dd>{current.name} · {current.game}</dd>
@@ -107,7 +107,7 @@ const sponsorList = (await sponsors()).map((s) => s.data);
   .vidctl .i-play,.vidctl[aria-pressed="true"] .i-pause{display:none}
   .vidctl[aria-pressed="true"] .i-play{display:block}
   .hero-in{position:relative;z-index:1;padding:0 0 72px;display:grid;grid-template-columns:1.4fr 1fr;gap:48px;align-items:end}
-  .hero h1{font-size:clamp(3rem,7vw,6rem)}
+  .hero h1{font-size:clamp(3rem,7vw,6rem);line-height:1}
   .hero h1 em{font-style:normal;color:var(--green)}
   .plate{border-top:2px solid var(--green);padding-top:18px}
   .plate dl{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:18px;margin-bottom:24px}
@@ -126,9 +126,9 @@ const sponsorList = (await sponsors()).map((s) => s.data);
   .yr .t > *{padding-inline:18px}
   .yr b{padding-top:18px}
   .yr h3{margin-top:6px}
-  .yr b{font:900 44px/1 var(--head);color:var(--green);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .yr b{font:400 44px/1 var(--display);color:var(--green);font-synthesis:none;font-variant-numeric:tabular-nums}
   .yr b.long{font-size:32px;line-height:44px}
-  .yr h3{font:900 22px/1.05 var(--head);text-transform:uppercase}
+  .yr h3{font:800 22px/1.1 var(--head)}
   .yr small{font-size:16px;color:var(--azure);margin-top:6px;line-height:1.5}
   .yr .aw{align-self:start;padding-top:14px;padding-bottom:22px;line-height:1.5;font-size:15px;font-weight:600;color:var(--cream);display:flex;gap:8px;align-items:flex-start}
   .yr .aw :global(svg){flex:none;width:14px;height:14px;margin-top:2px;color:var(--green)}
