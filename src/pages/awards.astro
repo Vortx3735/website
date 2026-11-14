@@ -17,7 +17,7 @@ const awards = (await robots()).flatMap((r) => r.data.awards.map((a) => {
 <style>
   .aw{list-style:none;columns:2;column-gap:56px}
   .aw li{break-inside:avoid;display:flex;gap:20px;padding:14px 0;border-bottom:1px solid rgba(155,206,225,.2)}
-  .aw b{font:900 20px/1.4 var(--head);color:var(--green);min-width:3em;font-variant-numeric:tabular-nums}
+  .aw b{font:800 20px/1.4 var(--head);color:var(--green);min-width:3em;font-variant-numeric:tabular-nums}
   .aw span{display:flex;flex-direction:column}
   .aw small{color:var(--azure);font-size:16px}
   @media (max-width:760px){.aw{columns:1}}
