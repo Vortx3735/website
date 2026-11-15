@@ -19,9 +19,16 @@ export function photo(folder: string, path: string | null | undefined): ImageMet
   );
 }
 
-/** Photos saved in content/gallery/assets, in file-name order. The Gallery shows placeholders until there are some. */
-export function galleryPhotos(): ImageMetadata[] {
-  return Object.keys(images).filter((k) => k.startsWith('/content/gallery/assets/')).sort().map((k) => images[k].default);
+// Gallery photos live in content/gallery/<section>/ (on-the-field, in-the-shop, outreach), not in an assets folder.
+const galleryImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/content/gallery/*/*.{jpg,jpeg,png,webp,gif,avif,JPG,JPEG,PNG}',
+  { eager: true },
+);
+
+/** Photos saved in one gallery section folder (e.g. 'on-the-field'), in file-name order. With no section, every gallery photo. */
+export function galleryPhotos(section?: string): ImageMetadata[] {
+  const prefix = section ? `/content/gallery/${section}/` : '/content/gallery/';
+  return Object.keys(galleryImages).filter((k) => k.startsWith(prefix)).sort().map((k) => galleryImages[k].default);
 }
 
 export async function settings() {

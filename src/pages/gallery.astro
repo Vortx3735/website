@@ -3,13 +3,18 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import { galleryPhotos } from '../lib/content';
-// Photos saved in content/gallery/assets fill the tiles in order; the rest stay placeholders. Photos of students need a media release.
-const real = galleryPhotos();
+// Photos saved in content/gallery/<section>/ fill the tiles in file-name order; empty tiles stay placeholders.
+// Photos of students need a media release.
 const spans = ['big', '', '', '', '', 'wide', '', ''];
-const sections = ['On the field', 'In the shop', 'Outreach'].map((title, n) => ({
-  title,
-  tiles: spans.map((span, i) => ({ span, img: real[n * 8 + i] ?? null })),
-}));
+const sections = [
+  { title: 'On the field', folder: 'on-the-field' },
+  { title: 'In the shop', folder: 'in-the-shop' },
+  { title: 'Outreach', folder: 'outreach' },
+].map((sec) => {
+  const real = galleryPhotos(sec.folder);
+  const count = Math.max(8, Math.ceil(real.length / 8) * 8); // whole blocks of 8 so the grid stays full
+  return { title: sec.title, tiles: Array.from({ length: count }, (_, i) => ({ span: spans[i % 8], img: real[i] ?? null })) };
+});
 ---
 <Base title="Gallery" description="Photos from VorTX seasons since 2011.">
   <PageHead title="Our Gallery" lead="Competitions, shop days and outreach." />
