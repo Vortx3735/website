@@ -59,6 +59,8 @@ const settings = defineCollection({
     address_line_2: z.string(),
     address_line_3: z.string(),
     join_form_link: z.string(),
+    // The Google Form shown on the Join us page (the viewform link with ?embedded=true).
+    join_form_embed: z.string().nullish(),
     sponsor_packet_link: z.string(),
     brand_guide_link: z.string(),
     calendar_embed_link: z.string().nullish(),

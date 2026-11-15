@@ -4,6 +4,7 @@ import { getCollection, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import Icon from '../components/Icon.astro';
+import { settings } from '../lib/content';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages', (p) => p.id !== 'home');
@@ -12,11 +13,13 @@ export async function getStaticPaths() {
 const { p } = Astro.props;
 const { Content } = await render(p);
 const { title, lead, description, button_label, button_link } = p.data;
+const formEmbed = p.id === 'join-us' ? (await settings()).join_form_embed : null;
 ---
 <Base title={title} description={description ?? lead}>
   <PageHead title={title} lead={lead} />
   <section class="section light after-head"><div class="wrap prose md" class:list={{ cards: p.id === 'leadership', faq: p.id === 'faq', wide: p.id === 'leadership' }}>
     <Content />
+    {formEmbed && <iframe class="gform" src={formEmbed} title="VorTX student interest form" loading="lazy">Loading…</iframe>}
     {button_label && button_link && <p class="cta"><a class="btn btn-dark" href={button_link}>{button_label} <Icon name="arrow" /></a></p>}
   </div></section>
 </Base>
@@ -39,6 +42,8 @@ const { title, lead, description, button_label, button_link } = p.data;
 </script>
 
 <style>
+  .gform{display:block;width:100%;height:1700px;border:0;margin-top:32px;background:var(--cream)}
+  @media (max-width:700px){.gform{height:2100px}}
   .wide{max-width:none}
   /* Leadership: the list becomes centered cards. */
   .cards :global(ul){list-style:none;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
