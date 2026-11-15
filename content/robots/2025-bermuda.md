@@ -6,7 +6,7 @@ events:
   - name: "FIT District Tomball Event"
     level: "District"
     awards:
-      - "Dean's List Semi-Finalist (Landon Pham)"
+      - "Dean's List Semi-Finalist (Landon P.)"
       - "Innovation in Control Award"
   - name: "FIT District San Antonio Event"
     level: "District"

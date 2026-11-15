@@ -1,0 +1,90 @@
+---
+// One page per robot, at /robots/<note name>/. Everything comes from that robot's note in content/robots.
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import PhotoScroller from '../../components/PhotoScroller.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import { robots, robotPhotos, parseAward, awardLine, text, fill } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const all = await robots(); // newest first
+  // The newest robot is featured on the main Robots page, so it has no page of its own.
+  return all.slice(1).map((r, i) => ({ params: { id: r.id }, props: { r, newer: i === 0 ? null : all.slice(1)[i - 1], older: all.slice(1)[i + 1] ?? null, newestIsFeatured: i === 0 } }));
+}
+const { r, newer, older, newestIsFeatured } = Astro.props;
+const t = await text('robots');
+const aw = await text('awards');
+const d = r.data;
+const vals = { year: d.year, name: d.name, game: d.game };
+const photos = await robotPhotos(d);
+const { Content } = await render(r);
+const hasStory = !!r.body?.trim();
+const specs = Object.entries(d.specs ?? {});
+const results = d.awards.map(awardLine).join(' // ');
+const events = d.events.map((e) => ({ ...e, awards: e.awards.map(parseAward) }));
+---
+<Base title={`${d.name} (${d.year})`} description={fill(t.description, vals)}>
+  <PageHead flat eyebrow={fill(t.detail_eyebrow, vals)} title={d.name} lead={d.tagline ?? undefined} />
+  {results && <div class="results"><div class="wrap">{results}</div></div>}
+  <section class="section light story"><div class="wrap two">
+    <div class="pic"><PhotoScroller robot={photos} width={1000} eager /></div>
+    {hasStory && <div class="md"><Content /></div>}
+  </div></section>
+  {specs.length > 0 && <section class="section navy"><div class="wrap">
+    <h2 class="h big">{t.specs_heading}</h2>
+    <div class="specs">{specs.map(([k, v]) => <div><span>{k.replace(/_/g, ' ')}</span><b>{v}</b></div>)}</div>
+  </div></section>}
+  <section class="section light"><div class="wrap">
+    <h2 class="h big">{t.detail_awards_heading}</h2>
+    {events.length === 0 ? <p>{t.no_awards}</p> : <ul class="evs">{events.map((e) => (
+      <li class:list={['ev', { won: e.won }]}>
+        <div class="head"><span class="en">{e.name}</span>{e.level && <span class="tier">{e.level}</span>}{e.won && <span class="win">{aw.winner_label}</span>}</div>
+        <ul class="awl">{e.awards.map((a) => <li class:list={{ chair: /^(chairman|impact)/i.test(a.name) }}><span>{a.name}</span>{a.detail && <small>{a.detail}</small>}</li>)}</ul>
+      </li>
+    ))}</ul>}
+  </div></section>
+  <section class="section grey"><div class="wrap nav">
+    <a class="btn btn-dark" href="/robots/">← {t.detail_back}</a>
+    <div class="seq">
+      {older && <a href={`/robots/${older.id}/`}>← {t.detail_older}<b>{older.data.year} · {older.data.name}</b></a>}
+      {(newer || newestIsFeatured) && <a class="r" href={newer ? `/robots/${newer.id}/` : '/robots/'}>{t.detail_newer} →<b>{newer ? `${newer.data.year} · ${newer.data.name}` : t.detail_current}</b></a>}
+    </div>
+  </div></section>
+</Base>
+<Lightbox />
+<style>
+  .section.grey{background:#f2f2f2;color:black}
+  .section.navy{background:var(--navy);color:var(--white)}
+  .story{padding-top:72px}
+  .two{display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start}
+  .two .pic{flex:1 1 560px;max-width:820px}
+  .two .md{flex:1 1 400px;font-size:17px}
+  h2.big{font-size:clamp(3rem,7vw,6rem);text-transform:uppercase;color:var(--navy);line-height:.9;margin-bottom:28px}
+  .navy h2.big{color:var(--white)}
+  .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));border:4px solid var(--green)}
+  .specs div{padding:28px;border-right:4px solid var(--green)}
+  .specs div:last-child{border-right:0}
+  .specs span{display:block;font-weight:800;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--green)}
+  .specs b{font:900 2.6rem/1.1 var(--head);text-transform:uppercase}
+  ul{list-style:none}
+  .evs{display:grid;gap:14px;max-width:900px}
+  .ev{border:2px solid var(--navy);padding:14px 18px;background:var(--white)}
+  .ev.won{background:var(--green)}
+  .head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-bottom:8px}
+  .en{font:900 1.25rem/1.1 var(--head);text-transform:uppercase;color:var(--navy)}
+  .tier{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border:2px solid var(--navy);color:var(--navy);padding:2px 8px}
+  .win{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:var(--navy);color:var(--green);padding:4px 10px}
+  .awl{display:grid;gap:6px}
+  .awl li{font-size:19px;font-weight:600;color:var(--navy);display:flex;flex-direction:column}
+  .awl small{font-size:15px;font-weight:400;color:var(--grey)}
+  .ev.won small{color:var(--navy)}
+  .awl li.chair span{align-self:flex-start;background:var(--green);padding:4px 12px;font-weight:800}
+  .ev.won .awl li.chair span{background:var(--navy);color:var(--green)}
+  .nav{display:flex;flex-wrap:wrap;gap:20px 40px;align-items:center;justify-content:space-between}
+  .seq{display:flex;flex-wrap:wrap;gap:20px 40px}
+  .seq a{display:block;text-decoration:none;color:var(--navy);font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .seq a b{display:block;font:900 1.5rem/1.1 var(--head);letter-spacing:0;margin-top:4px}
+  .seq a:hover b{color:var(--green);background:var(--navy);padding:0 6px}
+  .seq .r{text-align:right}
+</style>

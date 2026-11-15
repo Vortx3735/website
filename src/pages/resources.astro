@@ -1,27 +1,31 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import { settings } from '../lib/content';
-const site = await settings();
-const swatches = [['VorTX Navy', '#00334c'], ['VorTX Green', '#7fc241'], ['White', '#ffffff'], ['Black', '#000000']];
+import { settings, text } from '../lib/content';
+const site = await settings() as Record<string, any>;
+const t = await text('resources');
+type Card = { title: string; text: string; button: string; link: string };
+// A card link can be a web address, a page, a file in public/, or the name of a link in settings.
+const href = (l: string) => (site[l] ?? l) as string;
+const isFile = (l: string) => /^\/(images|files)\//.test(href(l));
 ---
-<Base title="Resources" description="VorTX 3735 brand guide, programming docs and logo files.">
-  <PageHead title="Our Resources" lead="Branding, code and documentation, shared so other teams and partners can use them." />
-  <section class="section navy after-head"><div class="wrap">
-    <div class="cards">
-      <article><h2>Branding</h2><p>The 2026 branding guidelines: logos, colors and usage rules.</p><a class="btn btn-go" href={site.brand_guide_link} rel="noopener">Open the guide</a></article>
-      <article><h2>Code and docs</h2><p>Our code and engineering notes, published openly.</p><a class="btn btn-go" href="/docs/">Open the docs</a></article>
-      <article><h2>Logo downloads</h2><p>Navy, white and full-color logo files.</p><a class="btn btn-go" href="/images/logotype-white.png" download>Download logo</a></article>
-    </div>
+<Base title={t.title} description={t.lead}>
+  <PageHead title={t.title} lead={t.lead} />
+  <section class="section light after-head"><div class="wrap">
+    <h2 class="h">{t.basics_heading}</h2>
+    <ul class="sw">{(t.swatches as { name: string; hex: string }[]).map((c) => <li><i style={`background:${c.hex}`}></i><b>{c.name}</b><span>{c.hex}</span></li>)}</ul>
+    <p class="rules"><b>{t.rules_label}</b> {t.rules}</p>
   </div></section>
-  <section class="section light"><div class="wrap">
-    <h2 class="h">Brand basics</h2>
-    <ul class="sw">{swatches.map(([n, c]) => <li><i style={`background:${c}`}></i><b>{n}</b><span>{c}</span></li>)}</ul>
-    <p class="rules"><b>Logo rules.</b> Do not crop, tilt, pattern or watermark the logo. Use navy or black text on green, never white.</p>
+  <section class="section navy"><div class="wrap">
+    <div class="cards">
+      {(t.cards as Card[]).map((c) => (
+        <article><h2>{c.title}</h2><p>{c.text}</p><a class="btn btn-go" href={href(c.link)} rel="noopener" download={isFile(c.link) ? '' : undefined}>{c.button}</a></article>
+      ))}
+    </div>
   </div></section>
 </Base>
 <style>
-  .section.navy{background:var(--navy);color:var(--white)}
+  .section.navy{background:var(--navy);color:var(--white);border-bottom:6px solid var(--green)}
   .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
   .cards article{border:2px solid var(--green);padding:28px;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
   .cards h2{font-family:var(--head);text-transform:uppercase;font-size:2rem;line-height:1;color:var(--white)}

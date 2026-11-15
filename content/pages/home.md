@@ -2,7 +2,6 @@
 title: "Home"
 headline: "We take the world"
 headline_highlight: "by storm"
-robot_dedication: "Dedicated to Noah Lewis"
 robot_link_label: "Specs, CAD and code"
 schools_heading: "Five Schools, One Shop"
 schools_text: "Students from Klein High, Klein Cain, Klein Oak, Klein Collins and Klein Forest build, code, design and run outreach together out of one garage in Spring."

@@ -3,15 +3,17 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import Rings from '../components/Rings.astro';
-import { page, robots, sponsors, photo, galleryPhotos, settings, parseAward } from '../lib/content';
+import { page, robots, sponsors, photo, galleryPhotos, settings, parseAward, text } from '../lib/content';
 
 const home = (await page('home')).data as Record<string, string>;
 const site = await settings();
+const t = await text('home');
+const g = await text('gallery');
 const all = await robots();
 const current = all[0];
 const currentImg = photo('robots', current.data.photos[0]);
 // Awards ticker: judged awards and results since 2019, newest first.
-const ticker = all.filter((r) => Number(r.data.year.slice(0, 4)) >= 2019).flatMap((r) =>
+const ticker = all.filter((r) => Number(r.data.year.slice(0, 4)) >= Number(t.ticker_from_year)).flatMap((r) =>
   r.data.awards.map(parseAward).map((a) => `${r.data.year.slice(0, 4)} ${a.name}${a.detail ? ` (${a.detail})` : ''}`));
 const allShots = galleryPhotos();
 const shots = Array.from({ length: 6 }, (_, i) => allShots[i] ?? null);
@@ -30,9 +32,9 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
     <div class="storm" aria-hidden="true"><div class="glow"></div><Rings /></div>
     <div class="wrap hero-in">
       <img class="tri" src="/images/triangle-white.png" alt="" width="102" height="88">
-      <p class="eyebrow">Team 3735 · Klein, Texas · Since 2011</p>
+      <p class="eyebrow">{t.hero_eyebrow}</p>
       <h1 class="outline reveal">{home.headline} <em>{home.headline_highlight}</em></h1>
-      <div class="acts"><a class="btn btn-go" href="/join-us/">Student sign up <Icon name="arrow" /></a></div>
+      <div class="acts"><a class="btn btn-go" href="/join-us/">{t.hero_button} <Icon name="arrow" /></a></div>
     </div>
   </section>
 
@@ -45,7 +47,7 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
 
   <section class="count" data-kickoff={site.kickoff_iso} aria-label="Countdown to kickoff">
     <div class="wrap in">
-      <div class="lbl"><p class="eyebrow">2027 season</p><div class="h big">Kickoff in</div>{site.kickoff_label && <p class="when">{site.kickoff_label}</p>}</div>
+      <div class="lbl"><p class="eyebrow">{t.countdown_eyebrow}</p><div class="h big">{t.countdown_heading}</div>{site.kickoff_label && <p class="when">{site.kickoff_label}</p>}</div>
       <div class="tiles">
         {['days', 'hours', 'minutes', 'seconds'].map((u) => <div class="tile"><div class="num" data-unit={u}>00</div><div class="u">{u}</div></div>)}
       </div>
@@ -56,7 +58,7 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
     <div class="wrap">
       <div class="pic"><div class="photo">{currentImg && <Image src={currentImg} alt={`${current.data.name}, our ${current.data.year} robot`} width={1000} />}</div></div>
       <div class="card">
-        <p class="eyebrow">{home.robot_dedication}</p>
+        {current.data.dedication && <p class="eyebrow">{current.data.dedication}</p>}
         <h2 class="h">{current.data.name}</h2>
         <p class="game">{current.data.year} · {current.data.game}</p>
         <a class="more" href="/robots/">{home.robot_link_label} <Icon name="arrow" /></a>
@@ -73,8 +75,8 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
 
   <section class="strip light">
     <div class="wrap">
-      <div class="strip-head"><h2 class="h">{home.gallery_heading}</h2><a class="more" href="/gallery/">All photos <Icon name="arrow" /></a></div>
-      <ul>{shots.map((img) => img ? <li class="photo"><Image src={img} alt="" width={420} /></li> : <li class="ph">Photo</li>)}</ul>
+      <div class="strip-head"><h2 class="h">{home.gallery_heading}</h2><a class="more" href="/gallery/">{t.gallery_link_label} <Icon name="arrow" /></a></div>
+      <ul>{shots.map((img) => img ? <li class="photo"><Image src={img} alt="" width={420} /></li> : <li class="ph">{g.placeholder_label}</li>)}</ul>
     </div>
   </section>
 
@@ -82,16 +84,16 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
     <div class="ask join">
       <h2 class="h">{home.join_heading}</h2>
       <p>{home.join_text}</p>
-      <a class="btn btn-go" href="/join-us/">Join the team</a>
+      <a class="btn btn-go" href="/join-us/">{t.join_button}</a>
     </div>
     <div class="ask back">
       <h2 class="h">{home.sponsor_heading}</h2>
       <p>{home.sponsor_text}</p>
-      <a class="btn btn-go" href="/support-us/">Sponsor us</a>
+      <a class="btn btn-go" href="/support-us/">{t.sponsor_button}</a>
     </div>
   </section>
   <section class="section light spons"><div class="wrap">
-    <p class="spons-h">Our sponsors keep <em>the shop running.</em></p>
+    <p class="spons-h">{t.sponsors_headline} <em>{t.sponsors_highlight}</em></p>
     <ul class="lg big">{primary.map((s) => <li>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{s.img ? <Image src={s.img} alt={s.name} width={480} /> : s.name}</a> : (s.img ? <Image src={s.img} alt={s.name} width={480} /> : s.name)}</li>)}</ul>
     <ul class="lg">{supporting.map((s) => <li>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{s.img ? <Image src={s.img} alt={s.name} width={320} /> : s.name}</a> : (s.img ? <Image src={s.img} alt={s.name} width={320} /> : s.name)}</li>)}</ul>
   </div></section>

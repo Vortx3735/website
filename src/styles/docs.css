@@ -1,13 +1,12 @@
-/* VorTX brand for the /docs/ section (Starlight): Futura LT body, Franklin headlines, navy header with the green rule. */
+/* VorTX brand for the /docs/ section (Starlight): Montserrat body, Franklin headlines, navy header with the green rule. */
+@import '@fontsource/montserrat/400.css';
+@import '@fontsource/montserrat/500.css';
+@import '@fontsource/montserrat/600.css';
+@import '@fontsource/montserrat/700.css';
 @import '@fontsource/libre-franklin/800.css';
 @import '@fontsource/libre-franklin/900.css';
-@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Light.ttf") format("truetype");font-weight:300;font-display:swap}
-@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Book.ttf") format("truetype");font-weight:400 500;font-display:swap}
-@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Bold.ttf") format("truetype");font-weight:600 700;font-display:swap}
-@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-ExtraBold.ttf") format("truetype");font-weight:800;font-display:swap}
-@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Heavy.ttf") format("truetype");font-weight:900;font-display:swap}
 :root{
-  --sl-font:"Futura LT",Arial,sans-serif;
+  --sl-font:"Montserrat",Arial,sans-serif;
   --vx-head:"Franklin Gothic Heavy","Libre Franklin",sans-serif;
 }
 :root[data-theme='dark']{

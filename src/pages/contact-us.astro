@@ -1,18 +1,19 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import { settings } from '../lib/content';
+import { settings, text } from '../lib/content';
 const site = await settings();
+const t = await text('contact');
 // The form posts to the contact_form_link set in content/settings.md. Until it is set, the form is hidden.
 const action = site.contact_form_link;
 ---
-<Base title="Contact us">
-  <PageHead title="Contact us" />
+<Base title={t.title}>
+  <PageHead title={t.title} />
   <section class="section light after-head"><div class="wrap contact">
     <div>
-      <h2 class="h">Visit</h2>
+      <h2 class="h">{t.visit_heading}</h2>
       <address><span>{site.address_line_1}</span><span>{site.address_line_2}</span><span>{site.address_line_3}</span></address>
-      <p class="spon">Interested in sponsoring? <a href="/support-us/">See the sponsorship package</a>.</p>
+      <p class="spon">{t.sponsor_text} <a href="/support-us/">{t.sponsor_link_label}</a>.</p>
     </div>
     {action ? (
       <form method="POST" action={action} class="form">
@@ -22,10 +23,10 @@ const action = site.contact_form_link;
         </div>
         <label>Email<input type="email" name="email" id="email" required autocomplete="email"></label>
         <label>Message<textarea name="message" id="message" rows="6" required></textarea></label>
-        <button class="btn btn-dark" type="submit">Send message</button>
+        <button class="btn btn-dark" type="submit">{t.send_button}</button>
       </form>
     ) : (
-      <p class="todo">The contact form is being moved to the new site.</p>
+      <p class="todo">{t.unavailable}</p>
     )}
   </div></section>
 </Base>

@@ -1,8 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
+import { text } from '../lib/content';
+const t = await text('not-found');
 ---
-<Base title="Page not found">
-  <PageHead title="Page not found" lead="That page moved or never existed." />
-  <section class="section light after-head"><div class="wrap"><a class="btn btn-dark" href="/">Go to the home page</a></div></section>
+<Base title={t.title}>
+  <PageHead title={t.title} lead={t.lead} />
+  <section class="section light after-head"><div class="wrap"><a class="btn btn-dark" href="/">{t.button}</a></div></section>
 </Base>

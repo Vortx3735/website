@@ -5,17 +5,12 @@
   --grey:#787878; --lgrey:#BCBCBC; --azure:#9BCEE1; --cream:#F0EBD9;
   /* Headlines: Franklin Gothic Heavy where installed, Libre Franklin 900 on the web. */
   --head:"Franklin Gothic Heavy","Libre Franklin",sans-serif;
-  /* Body: Futura LT (files in src/assets/fonts). */
-  --body:"Futura LT",Arial,sans-serif;
+  /* Body: Montserrat (loaded in Base.astro). */
+  --body:"Montserrat",Arial,sans-serif;
   --ease:cubic-bezier(.16,1,.3,1);
   --gutter:max(16px,env(safe-area-inset-left,0px));
   color-scheme:dark;
 }
-@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Light.ttf") format("truetype");font-weight:300;font-display:swap}
-@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Book.ttf") format("truetype");font-weight:400 500;font-display:swap}
-@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Bold.ttf") format("truetype");font-weight:600 700;font-display:swap}
-@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-ExtraBold.ttf") format("truetype");font-weight:800;font-display:swap}
-@font-face{font-family:"Futura LT";src:url("../assets/fonts/FuturaLT-Heavy.ttf") format("truetype");font-weight:900;font-display:swap}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scrollbar-color:var(--green) var(--deep)}
 body{display:flex;flex-direction:column;min-height:100svh;font-family:var(--body);font-size:clamp(1.0625rem,.95rem + .35vw,1.1875rem);background:var(--deep);color:var(--white);line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -66,12 +61,16 @@ main{flex:1;container-type:inline-size;--s:5cqw;overflow-x:clip}
 
 /* Page heads (inner pages): navy with a slanted bottom edge and the spinning vortex rings. */
 .page-head{position:relative;z-index:1;overflow:hidden;background:var(--navy);padding:72px 0 calc(var(--s) + 40px);clip-path:polygon(0 0,100% 0,100% calc(100% - var(--s)),0 100%)}
+.page-head.flat{clip-path:none;padding-bottom:56px}
+.page-head.flat + .results{margin-top:0;padding-top:0;clip-path:none}
 .page-head .wrap{position:relative;z-index:1}
 .page-head .eyebrow{font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:14px}
 .page-head h1{font-size:clamp(3.2rem,9vw,8rem)}
 .page-head p.lead{margin-top:24px;color:var(--white);max-width:44ch;font-size:clamp(1.125rem,1rem + .5vw,1.375rem)}
 .page-head .rings{position:absolute;right:-140px;top:-80px;width:min(640px,70vw);opacity:.9;animation:spin 36s linear infinite;pointer-events:none}
 @keyframes spin{to{transform:rotate(360deg)}}
+.results{position:relative;z-index:2;background:var(--green);color:var(--navy);margin-top:calc(var(--s) * -1 + 1px);padding-top:var(--s);clip-path:polygon(0 var(--s),100% 0,100% 100%,0 100%)}
+.results .wrap{padding-block:18px;font:900 clamp(1.2rem,2.4vw,2rem)/1.15 var(--head);text-transform:uppercase;letter-spacing:.02em}
 .section.after-head{margin-top:calc(var(--s) * -1 + 1px);padding-top:calc(var(--s) + 48px)}
 @keyframes title-in{from{clip-path:inset(0 0 100% 0);transform:translateY(50px)}to{clip-path:inset(-10%);transform:none}}
 @media (prefers-reduced-motion:no-preference) and (hover:hover){

@@ -35,6 +35,12 @@ const robots = defineCollection({
     specs: z.record(z.string()).nullish(),
     // Optional photo for the tribute section (newest robot only).
     tribute_photo: z.string().nullish(),
+    // Shown under the robot's name: a short line about it, and (for the newest robot) a dedication on the home page.
+    tagline: z.string().nullish(),
+    dedication: z.string().nullish(),
+    // A tribute section on the Robots page. It only shows when a heading is set.
+    tribute_heading: z.string().nullish(),
+    tribute_alt: z.string().nullish(),
   }).transform((d) => ({
     ...d,
     // Every award from every event, each name once, for the robot cards and the home page.
@@ -92,7 +98,13 @@ const settings = defineCollection({
   }),
 });
 
+// Wording for the site's headings, buttons, tabs and footer: one note per page in content/site-text.
+const siteText = defineCollection({
+  loader: glob({ pattern: '*.md', base: './content/site-text' }),
+  schema: z.object({}).passthrough(),
+});
+
 // The programming notes (content/docs) are turned into Starlight pages at build time.
 const docs = defineCollection({ loader: docsLoader(), schema: docsSchema() });
 
-export const collections = { pages, robots, sponsors, blog, settings, docs };
+export const collections = { pages, robots, sponsors, blog, settings, docs, 'site-text': siteText };

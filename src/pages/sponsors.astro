@@ -2,23 +2,24 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import { sponsors, photo } from '../lib/content';
+import { sponsors, photo, text } from '../lib/content';
+const t = await text('sponsors');
 const list = (await sponsors()).map((s) => ({ ...s.data, img: photo('sponsors', s.data.logo) }));
 const primary = list.filter((s) => s.tier === 'primary');
 const supporting = list.filter((s) => s.tier !== 'primary');
 ---
-<Base title="Sponsors">
-  <PageHead eyebrow="Backers" title="Our Sponsors" lead="Every robot, trip and outreach event is paid for by the people and organizations below." />
+<Base title={t.title} description={t.lead}>
+  <PageHead eyebrow={t.eyebrow} title={t.title} lead={t.lead} />
   <section class="section light after-head"><div class="wrap">
-    <h2 class="lbl">Primary sponsors</h2>
+    <h2 class="lbl">{t.primary_label}</h2>
     <ul class="logos big">{primary.map((s) => (
       <li class:list={{ linked: !!s.website }}>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{s.img ? <Image src={s.img} alt={s.name} width={480} /> : <span>{s.name}</span>}<span class="go" aria-hidden="true">Visit site ↗</span></a> : (s.img ? <Image src={s.img} alt={s.name} width={480} /> : <span>{s.name}</span>)}</li>
     ))}</ul>
-    <h2 class="lbl">Supporting sponsors</h2>
+    <h2 class="lbl">{t.supporting_label}</h2>
     <ul class="logos">{supporting.map((s) => (
       <li class:list={{ linked: !!s.website }}>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{s.img ? <Image src={s.img} alt={s.name} width={320} /> : <span>{s.name}</span>}<span class="go" aria-hidden="true">Visit site ↗</span></a> : (s.img ? <Image src={s.img} alt={s.name} width={320} /> : <span>{s.name}</span>)}</li>
     ))}</ul>
-    <p class="more"><a class="btn btn-dark" href="/support-us/">Become a sponsor</a></p>
+    <p class="more"><a class="btn btn-dark" href="/support-us/">{t.button_label}</a></p>
   </div></section>
 </Base>
 <style>

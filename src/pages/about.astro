@@ -5,8 +5,9 @@ import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import Icon from '../components/Icon.astro';
-import { page, robots, photo } from '../lib/content';
+import { page, robots, photo, text, fill } from '../lib/content';
 
+const t = await text('about');
 const about = await page('about');
 const history = await page('our-history');
 const mission = await page('our-mission');
@@ -28,41 +29,41 @@ const current = (await robots())[0];
 const img = photo('robots', current.data.photos[0]);
 ---
 <Base title="About" description={about.data.description}>
-  <PageHead title="Who we are" eyebrow="About / since 2011" lead={about.data.lead} />
+  <PageHead title={t.title} eyebrow={t.eyebrow} lead={about.data.lead} />
 
   <section class="section light after-head"><div class="wrap two">
-    <h2 class="big">One team,<br>five schools</h2>
+    <h2 class="big">{String(t.blurb_heading).split("\n").map((l, i) => <>{i > 0 && <br />}{l}</>)}</h2>
     <div class="prose md"><AboutText /></div>
   </div></section>
 
   <section class="section cream" id="our-mission"><div class="wrap">
-    <h2 class="big">Our mission</h2>
+    <h2 class="big">{t.mission_heading}</h2>
     <div class="mission">{statements.map((t, i) => <div><b>{String(i + 1).padStart(2, '0')}</b><p>{t}</p></div>)}</div>
   </div></section>
 
   <section class="section light" id="our-history"><div class="wrap two">
-    <h2 class="big">Our history</h2>
+    <h2 class="big">{t.history_heading}</h2>
     <div class="prose md"><p class="kicker">{history.data.lead}</p><HistoryText /></div>
   </div></section>
 
   <section class="section navy" id="leadership"><div class="wrap">
-    <h2 class="big">Leadership</h2>
+    <h2 class="big">{t.leadership_heading}</h2>
     <ul class="cards">{lead.map((l) => <li><strong>{l.name}</strong>{l.role}</li>)}</ul>
   </div></section>
 
   <section class="section light robot"><div class="wrap two">
     <div class="pic"><div class="photo">{img && <Image src={img} alt={`${current.data.name}, our ${current.data.year} robot`} width={900} />}</div></div>
-    <div><h2 class="big">Robots</h2><p>Every season is a new robot, designed, machined, wired and programmed by students. This year it is {current.data.name}.</p><p class="go"><a class="btn btn-dark" href="/robots/">See all robots <Icon name="arrow" /></a></p></div>
+    <div><h2 class="big">{t.robots_heading}</h2><p>{fill(t.robots_text, { name: current.data.name, year: current.data.year })}</p><p class="go"><a class="btn btn-dark" href="/robots/">{t.robots_button} <Icon name="arrow" /></a></p></div>
   </div></section>
 
   <section class="section cream" id="coaches-mentors"><div class="wrap">
-    <h2 class="big">Coaches</h2>
-    <ul class="cards light-cards">{coaches.map((n) => <li><strong>{n}</strong>Coach</li>)}</ul>
+    <h2 class="big">{t.coaches_heading}</h2>
+    <ul class="cards light-cards">{coaches.map((n) => <li><strong>{n}</strong>{t.coach_role}</li>)}</ul>
   </div></section>
 
   <section class="section light"><div class="wrap">
-    <h2 class="big">Mentors</h2>
-    <p class="sub">Engineers and professionals who give their time to the team.</p>
+    <h2 class="big">{t.mentors_heading}</h2>
+    <p class="sub">{t.mentors_text}</p>
     <ul class="names">{mentors.map((n) => <li>{n}</li>)}</ul>
   </div></section>
 </Base>

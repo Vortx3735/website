@@ -1,5 +1,6 @@
 import { getCollection, getEntry } from 'astro:content';
 import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
 
 // Every image saved in an `assets` folder inside /content, keyed by its path.
 const images = import.meta.glob<{ default: ImageMetadata }>(
@@ -36,8 +37,35 @@ export async function settings() {
   return all[0].data;
 }
 
+/** The wording note for a page, from content/site-text/<id>.md. */
+export async function text(id: string): Promise<Record<string, any>> {
+  const entry = await getEntry('site-text', id);
+  if (!entry) throw new Error(`Missing content/site-text/${id}.md`);
+  return entry.data;
+}
+
+/** Fill {year}, {name} and similar markers in a line of text. */
+export function fill(line: string, values: Record<string, string>) {
+  return line.replace(/\{(\w+)\}/g, (m, k) => values[k] ?? m);
+}
+
 export async function robots() {
   return (await getCollection('robots')).sort((a, b) => b.data.year.localeCompare(a.data.year));
+}
+
+export type RobotPhotos = { name: string; year: string; imgs: ImageMetadata[]; full: string[] };
+
+/** A robot's photos, plus a larger copy of each for the expanded view. */
+export async function robotPhotos(r: { name: string; year: string; photos: string[] }): Promise<RobotPhotos> {
+  const imgs = r.photos.map((p) => photo('robots', p)).filter((i): i is ImageMetadata => i !== null);
+  const full = await Promise.all(imgs.map(async (i) => (await getImage({ src: i, width: 1800 })).src));
+  return { name: r.name, year: r.year, imgs, full };
+}
+
+/** A line like "Name (detail)" for an award. */
+export function awardLine(raw: string) {
+  const a = parseAward(raw);
+  return a.detail ? `${a.name} (${a.detail})` : a.name;
 }
 
 export async function sponsors() {

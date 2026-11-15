@@ -1,17 +1,18 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import { settings } from '../lib/content';
+import { settings, text } from '../lib/content';
 const site = await settings();
+const t = await text('calendar');
 // The calendar comes from calendar_embed_link in content/settings.md.
 const src = site.calendar_embed_link;
 ---
-<Base title="Calendar">
-  <PageHead title="On the calendar" lead="Meetings, Events, and Competitions." />
+<Base title={t.title} description={t.lead}>
+  <PageHead title={t.title} lead={t.lead} />
   <section class="section light after-head"><div class="wrap">
-    {src ? <div class="cal"><iframe src={src} title="VorTX team calendar" loading="lazy"></iframe></div>
-         : <p>The calendar is being moved to the new site. Meeting times are on the <a href="/faq/">FAQ</a>.</p>}
-    {site.calendar_add_link && <p class="add"><a class="btn btn-dark" href={site.calendar_add_link} rel="noopener">Add to my calendar</a></p>}
+    {src ? <div class="cal"><iframe src={src} title={t.frame_title} loading="lazy"></iframe></div>
+         : <p>{t.fallback}</p>}
+    {site.calendar_add_link && <p class="add"><a class="btn btn-dark" href={site.calendar_add_link} rel="noopener">{t.add_button}</a></p>}
   </div></section>
 </Base>
 <style>

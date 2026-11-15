@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import { robots, parseAward } from '../lib/content';
+import { robots, parseAward, text, fill } from '../lib/content';
+const t = await text('awards');
 // Each season's events and the awards won at them live on its robot file in content/robots.
 const years = (await robots())
   .filter((r) => r.data.events.length > 0)
@@ -9,8 +10,8 @@ const years = (await robots())
 const first = years.at(-1)?.year ?? '2014';
 const last = years[0]?.year ?? '2026';
 ---
-<Base title="Awards" description="Every event where VorTX has won an award, and the awards won there.">
-  <PageHead title="Hardware earned" eyebrow={`Awards / ${first} to ${last}`} lead="Every event where we won an award. Events we won outright are highlighted." />
+<Base title={t.title} description={t.lead}>
+  <PageHead title={t.title} eyebrow={fill(t.eyebrow, { first, last })} lead={t.lead} />
   <section class="section light after-head"><div class="wrap">
     {years.map((y) => (
       <div class="yr">
@@ -20,10 +21,10 @@ const last = years[0]?.year ?? '2026';
             <div class="head">
               <span class="en">{e.name}</span>
               {e.level && <span class="tier">{e.level}</span>}
-              {e.won && <span class="win">Event winners</span>}
+              {e.won && <span class="win">{t.winner_label}</span>}
             </div>
             <ul class="aw">{e.awards.map((a) => (
-              <li class:list={{ big: a.name.startsWith("Chairman") }}><span class="nm">{a.name}{a.detail && <small>{a.detail}</small>}</span></li>
+              <li class:list={{ big: /^(chairman|impact)/i.test(a.name) }}><span class="nm">{a.name}{a.detail && <small>{a.detail}</small>}</span></li>
             ))}</ul>
           </li>
         ))}</ul>
@@ -47,5 +48,7 @@ const last = years[0]?.year ?? '2026';
   .nm{display:flex;flex-direction:column}
   small{font-size:15px;font-weight:400;color:var(--grey)}
   .ev.won small{color:var(--navy)}
-  .aw li.big .nm{font-weight:800}
+  .aw li.big .nm{align-self:flex-start;background:var(--green);color:var(--navy);padding:4px 12px;font-weight:800}
+  .ev.won .aw li.big .nm{background:var(--navy);color:var(--green)}
+  .aw li.big small{padding-left:12px}
 </style>

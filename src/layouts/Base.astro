@@ -1,27 +1,26 @@
 ---
+import '@fontsource/montserrat/300.css';
+import '@fontsource/montserrat/400.css';
+import '@fontsource/montserrat/500.css';
+import '@fontsource/montserrat/600.css';
+import '@fontsource/montserrat/700.css';
+import '@fontsource/montserrat/800.css';
 import '@fontsource/libre-franklin/800.css';
 import '@fontsource/libre-franklin/900.css';
 import '../styles/global.css';
-import { settings, posts } from '../lib/content';
+import { settings, posts, text } from '../lib/content';
 const site = await settings();
+const t = await text('site');
 const hasBlog = (await posts()).length > 0;
 
 interface Props { title?: string; description?: string }
-const { title, description = 'FRC Team 3735 VorTX, the Klein ISD robotics team in Spring, Texas.' } = Astro.props;
-const fullTitle = title ? `${title} · VorTX 3735` : 'VorTX 3735 · FRC robotics, Klein ISD';
+const { title, description = t.description } = Astro.props;
+const fullTitle = title ? `${title} · ${t.title_suffix}` : t.home_title;
 type Item = { href: string; label: string };
 // One flat row of tabs, same order as the design. About's subpages (mission, history, leadership, coaches and mentors) are linked from the About page, and the programming docs from Resources.
 const nav: Item[] = [
-  { href: '/', label: 'Home' },
-  { href: '/about/', label: 'About' },
-  { href: '/robots/', label: 'Robots' },
-  { href: '/awards/', label: 'Awards' },
-  { href: '/gallery/', label: 'Gallery' },
-  { href: '/calendar/', label: 'Calendar' },
-  { href: '/faq/', label: 'FAQ' },
-  { href: '/resources/', label: 'Resources' },
-  { href: '/sponsors/', label: 'Sponsors' },
-  ...(hasBlog ? [{ href: '/blog/', label: 'Blog' }] : []),
+  ...(t.tabs as Item[]),
+  ...(hasBlog ? [{ href: '/blog/', label: t.blog_tab_label }] : []),
 ];
 const socials = [
   { label: 'Instagram', href: site.instagram_link },
@@ -30,7 +29,7 @@ const socials = [
   { label: 'X', href: site.x_link },
 ].filter((l) => l.href);
 const path = Astro.url.pathname;
-const aboutPages = ['/about/', '/our-mission/', '/our-history/', '/leadership/', '/coaches-mentors/', '/faq/'];
+const aboutPages = ['/about/', '/our-mission/', '/our-history/', '/leadership/', '/coaches-mentors/'];
 const isCurrent = (n: Item) => n.href === '/' ? path === '/'
   : n.href === '/about/' ? aboutPages.some((h) => path.startsWith(h))
   : n.href === '/resources/' ? path.startsWith('/resources/') || path.startsWith('/docs/')
@@ -57,9 +56,9 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/'
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
       <nav id="main-nav" aria-label="Main">
         {nav.map((n) => <a href={n.href} aria-current={isCurrent(n) ? 'page' : undefined}>{n.label}</a>)}
-        <a class="mob" href="/support-us/">Support us</a><a class="mob" href="/join-us/">Join the team</a>
+        <a class="mob" href="/support-us/">{t.support_label}</a><a class="mob" href="/join-us/">{t.join_label}</a>
       </nav>
-      <div class="ctas"><a class="btn btn-line" href="/support-us/">Support us</a><a class="btn btn-go" href="/join-us/">Join the team</a></div>
+      <div class="ctas"><a class="btn btn-line" href="/support-us/">{t.support_label}</a><a class="btn btn-go" href="/join-us/">{t.join_label}</a></div>
     </div>
   </header>
   <main id="main"><slot /></main>
@@ -68,11 +67,11 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/'
       <a href="/" class="logo" aria-label="VorTX 3735 home"><img src="/images/logotype-white.png" alt="VorTX 3735" width="180" height="48"></a>
       <ul class="links" aria-label="Social links and contact">
         {socials.map((l) => <li><a href={l.href} rel="noopener">{l.label}</a></li>)}
-        <li><a class="mail" href={`mailto:${site.email}`} aria-label={`Email ${site.email}`}>Email</a></li>
-        <li><a class="sup" href="/support-us/">Support us</a></li>
+        <li><a class="mail" href={`mailto:${site.email}`} aria-label={`Email ${site.email}`}>{t.email_label}</a></li>
+        <li><a class="sup" href="/support-us/">{t.support_label}</a></li>
       </ul>
     </div>
-    <div class="wrap legal">© 2011 - {new Date().getFullYear()} FRC VorTX 3735. All rights reserved.</div>
+    <div class="wrap legal">© {t.start_year} - {new Date().getFullYear()} {t.copyright}</div>
   </footer>
   <script>
     const b = document.querySelector('.menu-btn'), n = document.getElementById('main-nav');

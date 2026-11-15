@@ -1,12 +1,12 @@
 ---
 import Rings from './Rings.astro';
-interface Props { title: string; lead?: string; eyebrow?: string }
-const { title, lead, eyebrow } = Astro.props;
+interface Props { title: string; lead?: string; eyebrow?: string; flat?: boolean }
+const { title, lead, eyebrow, flat = false } = Astro.props;
 // The last word of the title is green.
 const words = title.split(' ');
 const last = words.pop();
 ---
-<section class="page-head">
+<section class:list={['page-head', { flat }]}>
   <Rings />
   <div class="wrap">
     {eyebrow && <p class="eyebrow">{eyebrow}</p>}
