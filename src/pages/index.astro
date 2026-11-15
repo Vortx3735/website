@@ -5,13 +5,15 @@ import Icon from '../components/Icon.astro';
 import { page, robots, sponsors, photo } from '../lib/content';
 import { existsSync } from 'node:fs';
 
+// Awards are written "Name (Event)"; the homepage shows just the name.
+const short = (a?: string) => a?.replace(/\s*\([^)]*\)\s*$/, '');
 const home = (await page('home')).data as Record<string, string>;
 const all = await robots();
 const current = all[0].data;
 const rail = all.map((r) => ({
   ...r.data,
   img: photo('robots', r.data.photos[0]),
-  award: r.data.awards.find((a) => !a.startsWith("Dean's List")),
+  award: short(r.data.awards.find((a) => !a.startsWith("Dean's List"))),
   long: r.data.year.length > 4,
 }));
 // The time-lapse video and its still frame live in public/media/.
@@ -35,7 +37,7 @@ const sponsorList = (await sponsors()).map((s) => s.data);
         <dl>
           <dt>{current.year} robot</dt><dd>{current.name} · {current.game}</dd>
           {home.robot_named_for && <><dt>Named for</dt><dd>{home.robot_named_for}</dd></>}
-          {current.awards.length > 0 && <><dt>Honors</dt><dd>{current.awards.join(' · ')}</dd></>}
+          {current.awards.length > 0 && <><dt>Honors</dt><dd>{current.awards.map(short).join(' · ')}</dd></>}
         </dl>
         <div class="acts">
           <a class="btn btn-go" href="/join-us/">Join the team <Icon name="arrow" /></a>
@@ -126,14 +128,14 @@ const sponsorList = (await sponsors()).map((s) => s.data);
   .yr .t > *{padding-inline:18px}
   .yr b{padding-top:18px}
   .yr h3{margin-top:6px}
-  .yr b{font:400 44px/1 var(--display);color:var(--green);font-synthesis:none;font-variant-numeric:tabular-nums}
+  .yr b{font:400 44px/1 var(--display);color:var(--white);font-synthesis:none;font-variant-numeric:tabular-nums}
   .yr b.long{font-size:32px;line-height:44px}
   .yr h3{font:800 22px/1.1 var(--head)}
   .yr small{font-size:16px;color:var(--azure);margin-top:6px;line-height:1.5}
   .yr .aw{align-self:start;padding-top:14px;padding-bottom:22px;line-height:1.5;font-size:15px;font-weight:600;color:var(--cream);display:flex;gap:8px;align-items:flex-start}
   .yr .aw :global(svg){flex:none;width:14px;height:14px;margin-top:2px;color:var(--green)}
   .yr.now{box-shadow:inset 0 3px 0 var(--green)}
-  .yr.now b{color:var(--white)}
+  .yr.now b{color:var(--green)}
   .asks{display:grid;grid-template-columns:1fr 1fr}
   .ask{padding:88px 64px;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
   .ask.join{padding-left:max(16px,calc((100vw - 1240px)/2));background:var(--cream);color:var(--black)}
