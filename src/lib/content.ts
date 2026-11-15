@@ -19,6 +19,11 @@ export function photo(folder: string, path: string | null | undefined): ImageMet
   );
 }
 
+/** Photos saved in content/gallery/assets, in file-name order. The Gallery shows placeholders until there are some. */
+export function galleryPhotos(): ImageMetadata[] {
+  return Object.keys(images).filter((k) => k.startsWith('/content/gallery/assets/')).sort().map((k) => images[k].default);
+}
+
 export async function settings() {
   const all = await getCollection('settings');
   return all[0].data;

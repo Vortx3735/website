@@ -35,6 +35,7 @@ const sponsors = defineCollection({
     logo: z.string().nullish(),
     website: z.string().nullish(),
     order: z.coerce.number().default(99),
+    tier: z.enum(['primary', 'supporting']).default('supporting'),
     hidden: z.boolean().default(false),
   }),
 });

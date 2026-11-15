@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { settings } from '../lib/content';
+const site = await settings();
+const swatches = [['VorTX Navy', '#00334c'], ['VorTX Green', '#7fc241'], ['White', '#ffffff'], ['Black', '#000000']];
+const more = [
+  ['Programming docs', '/docs/'], ['Our code on GitHub', 'https://github.com/Vortx3735'],
+  ['Sponsorship packet', site.sponsor_packet_link], ['FAQ', '/faq/'], ['Calendar', '/calendar/'],
+];
+---
+<Base title="Resources" description="VorTX 3735 brand guide, programming docs and logo files.">
+  <PageHead title="Our Resources" lead="Branding, code and documentation, shared so other teams and partners can use them." />
+  <section class="section navy after-head"><div class="wrap">
+    <div class="cards">
+      <article><h2>Branding</h2><p>The 2026 branding guidelines: logos, colors and usage rules.</p><a class="btn btn-go" href={site.brand_guide_link} rel="noopener">Open the guide</a></article>
+      <article><h2>Code and docs</h2><p>Our code and engineering notes, published openly.</p><a class="btn btn-go" href="/docs/">Open the docs</a></article>
+      <article><h2>Logo downloads</h2><p>Navy, white and full-color logo files.</p><a class="btn btn-go" href="/images/logotype-white.png" download>Download logo</a></article>
+    </div>
+  </div></section>
+  <section class="section light"><div class="wrap">
+    <h2 class="h">Brand basics</h2>
+    <ul class="sw">{swatches.map(([n, c]) => <li><i style={`background:${c}`}></i><b>{n}</b><span>{c}</span></li>)}</ul>
+    <p class="rules"><b>Logo rules.</b> Do not crop, tilt, pattern or watermark the logo. Use navy or black text on green, never white.</p>
+    <h2 class="lbl">More links</h2>
+    <ul class="more">{more.map(([n, h]) => <li><a href={h}>{n} →</a></li>)}</ul>
+  </div></section>
+</Base>
+<style>
+  .section.navy{background:var(--navy);color:var(--white)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .cards article{border:2px solid var(--green);padding:28px;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+  .cards h2{font-family:var(--head);text-transform:uppercase;font-size:2rem;line-height:1;color:var(--white)}
+  .cards p{flex:1;font-size:1.05rem}
+  h2.h{font-size:clamp(2.6rem,5vw,4.5rem);text-transform:uppercase;color:var(--navy);margin-bottom:24px;line-height:.9}
+  .sw{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+  .sw i{display:block;height:90px;border:1px solid #ccc;margin-bottom:8px}
+  .sw b{display:block;color:var(--navy)}
+  .sw span{font-size:14px;color:var(--grey);text-transform:uppercase}
+  .rules{max-width:640px;margin-bottom:48px}
+  .lbl{font-family:var(--body);font-weight:800;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--navy);margin-bottom:12px}
+  .more{list-style:none;display:flex;flex-wrap:wrap;gap:10px 28px}
+  .more a{font-weight:700;color:var(--navy);text-decoration:none}
+  .more a:hover{color:var(--green)}
+</style>

@@ -4,26 +4,35 @@ import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import { sponsors, photo } from '../lib/content';
 const list = (await sponsors()).map((s) => ({ ...s.data, img: photo('sponsors', s.data.logo) }));
+const primary = list.filter((s) => s.tier === 'primary');
+const supporting = list.filter((s) => s.tier !== 'primary');
 ---
 <Base title="Sponsors">
-  <PageHead title="Our Sponsors" lead="Our sponsors keep the shop running." />
+  <PageHead eyebrow="Backers" title="Our Sponsors" lead="Every robot, trip and outreach event is paid for by the people and organizations below." />
   <section class="section light after-head"><div class="wrap">
-    <ul class="logos">{list.map((s) => {
-      const inner = s.img ? <Image src={s.img} alt={s.name} width={320} /> : <span>{s.name}</span>;
-      return <li class:list={{ linked: !!s.website }}>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{inner}<span class="go" aria-hidden="true">Visit site ↗</span></a> : inner}</li>;
-    })}</ul>
+    <h2 class="lbl">Primary sponsors</h2>
+    <ul class="logos big">{primary.map((s) => (
+      <li class:list={{ linked: !!s.website }}>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{s.img ? <Image src={s.img} alt={s.name} width={480} /> : <span>{s.name}</span>}<span class="go" aria-hidden="true">Visit site ↗</span></a> : (s.img ? <Image src={s.img} alt={s.name} width={480} /> : <span>{s.name}</span>)}</li>
+    ))}</ul>
+    <h2 class="lbl">Supporting sponsors</h2>
+    <ul class="logos">{supporting.map((s) => (
+      <li class:list={{ linked: !!s.website }}>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{s.img ? <Image src={s.img} alt={s.name} width={320} /> : <span>{s.name}</span>}<span class="go" aria-hidden="true">Visit site ↗</span></a> : (s.img ? <Image src={s.img} alt={s.name} width={320} /> : <span>{s.name}</span>)}</li>
+    ))}</ul>
     <p class="more"><a class="btn btn-dark" href="/support-us/">Become a sponsor</a></p>
   </div></section>
 </Base>
 <style>
-  .logos{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px}
-  .logos li{background:var(--white);border:1px solid #e4e4e4;height:140px;display:grid;place-items:center;padding:20px;text-align:center;font-weight:700;color:var(--navy)}
-  .logos li{position:relative;transition:border-color .2s}
+  .lbl{font-family:var(--body);font-weight:800;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--navy);margin:0 0 14px}
+  .logos{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:48px}
+  .logos.big{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  .logos li{background:var(--white);border:1px solid #e4e4e4;height:112px;display:grid;place-items:center;padding:16px;text-align:center;font-weight:700;color:var(--navy);position:relative;transition:border-color .2s}
+  .logos.big li{height:200px;padding:28px;border:2px solid var(--navy)}
   .logos a{display:grid;place-items:center;width:100%;height:100%;text-decoration:none}
   .logos .go{position:absolute;right:10px;bottom:8px;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--grey);opacity:0;transition:opacity .2s}
   .logos li.linked:hover,.logos li.linked:focus-within{border-color:var(--green)}
   .logos li.linked:hover .go,.logos li.linked:focus-within .go{opacity:1}
   @media (hover:none){.logos .go{opacity:1}}
-  .logos img{max-height:96px;width:auto;object-fit:contain}
-  .more{margin-top:40px}
+  .logos img{max-height:72px;max-width:100%;width:auto;object-fit:contain}
+  .logos.big img{max-height:140px}
+  .more{margin-top:8px}
 </style>
