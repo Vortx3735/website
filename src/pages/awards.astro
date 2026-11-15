@@ -2,23 +2,29 @@
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import { robots, parseAward } from '../lib/content';
-// Awards are listed on each season's robot file in content/robots.
+// Each season's events and the awards won at them live on its robot file in content/robots.
 const years = (await robots())
-  .filter((r) => r.data.awards.length > 0)
-  .map((r) => ({ year: r.data.year.slice(0, 4), awards: r.data.awards.map(parseAward) }));
+  .filter((r) => r.data.events.length > 0)
+  .map((r) => ({ year: r.data.year.slice(0, 4), events: r.data.events.map((e) => ({ ...e, awards: e.awards.map(parseAward) })) }));
 const first = years.at(-1)?.year ?? '2014';
 const last = years[0]?.year ?? '2026';
 ---
-<Base title="Awards" description="Judged awards and event results from every VorTX season.">
-  <PageHead title="Hardware earned" eyebrow={`Awards / ${first} to ${last}`} lead="Judged awards and event results. Tags show the event level." />
+<Base title="Awards" description="Every event where VorTX has won an award, and the awards won there.">
+  <PageHead title="Hardware earned" eyebrow={`Awards / ${first} to ${last}`} lead="Every event where we won an award. Events we won outright are highlighted." />
   <section class="section light after-head"><div class="wrap">
     {years.map((y) => (
       <div class="yr">
         <div class="n">{y.year}</div>
-        <ul>{y.awards.map((a) => (
-          <li class:list={{ big: a.name.startsWith("Chairman") }}>
-            <span class="nm">{a.name}{a.detail && <small>{a.detail}</small>}</span>
-            {a.tier && <span class="tier">{a.tier}</span>}
+        <ul class="evs">{y.events.map((e) => (
+          <li class:list={['ev', { won: e.won }]}>
+            <div class="head">
+              <span class="en">{e.name}</span>
+              {e.level && <span class="tier">{e.level}</span>}
+              {e.won && <span class="win">Event winners</span>}
+            </div>
+            <ul class="aw">{e.awards.map((a) => (
+              <li class:list={{ big: a.name.startsWith("Chairman") }}><span class="nm">{a.name}{a.detail && <small>{a.detail}</small>}</span></li>
+            ))}</ul>
           </li>
         ))}</ul>
       </div>
@@ -27,12 +33,19 @@ const last = years[0]?.year ?? '2026';
 </Base>
 <style>
   .yr{display:flex;flex-wrap:wrap;gap:12px 40px;border-top:4px solid var(--navy);padding:22px 0;align-items:flex-start}
-  .n{font:900 clamp(3.5rem,8vw,6rem)/.8 var(--head);color:var(--navy);flex:0 0 220px;font-variant-numeric:tabular-nums}
-  ul{list-style:none;flex:1 1 420px;display:grid;gap:10px}
-  li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:20px;font-weight:600}
+  .n{font:900 clamp(3.5rem,8vw,6rem)/.8 var(--head);color:var(--navy);flex:0 0 220px;width:220px;font-variant-numeric:tabular-nums}
+  ul{list-style:none}
+  .evs{flex:1 1 420px;min-width:0;display:grid;gap:14px}
+  .ev{border:2px solid var(--navy);padding:14px 18px;background:var(--white)}
+  .ev.won{background:var(--green);border-color:var(--navy)}
+  .head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-bottom:8px}
+  .en{font:900 1.25rem/1.1 var(--head);text-transform:uppercase;color:var(--navy)}
+  .tier{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border:2px solid var(--navy);color:var(--navy);padding:2px 8px;white-space:nowrap}
+  .win{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:var(--navy);color:var(--green);padding:4px 10px;white-space:nowrap}
+  .aw{display:grid;gap:6px}
+  .aw li{font-size:19px;font-weight:600;color:var(--navy)}
   .nm{display:flex;flex-direction:column}
   small{font-size:15px;font-weight:400;color:var(--grey)}
-  li.big .nm{background:var(--green);color:var(--navy);font-weight:800;padding:4px 12px;flex-direction:row;gap:10px;align-items:baseline}
-  li.big small{color:var(--navy)}
-  .tier{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border:2px solid var(--navy);color:var(--navy);padding:2px 8px;white-space:nowrap}
+  .ev.won small{color:var(--navy)}
+  .aw li.big .nm{font-weight:800}
 </style>

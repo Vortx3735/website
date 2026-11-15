@@ -16,7 +16,9 @@ const ticker = all.filter((r) => Number(r.data.year.slice(0, 4)) >= 2019).flatMa
 const shots = Array.from({ length: 6 }, (_, i) => galleryPhotos()[i] ?? null);
 // Hero background picture.
 const poster = '/images/arena-hero.jpg';
-const sponsorList = (await sponsors()).map((s) => s.data);
+const sponsorList = (await sponsors()).map((s) => ({ ...s.data, img: photo('sponsors', s.data.logo) }));
+const primary = sponsorList.filter((s) => s.tier === 'primary');
+const supporting = sponsorList.filter((s) => s.tier !== 'primary');
 const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
 ---
 <Base>
@@ -79,15 +81,19 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
     <div class="ask join">
       <h2 class="h">{home.join_heading}</h2>
       <p>{home.join_text}</p>
-      <a class="btn btn-dark" href="/join-us/">Join the team</a>
+      <a class="btn btn-go" href="/join-us/">Join the team</a>
     </div>
     <div class="ask back">
       <h2 class="h">{home.sponsor_heading}</h2>
       <p>{home.sponsor_text}</p>
-      <ul class="sp">{sponsorList.map((s) => <li>{s.website ? <a href={s.website} rel="noopener">{s.name}</a> : s.name}</li>)}</ul>
       <a class="btn btn-go" href="/support-us/">Sponsor us</a>
     </div>
   </section>
+  <section class="section light spons"><div class="wrap">
+    <p class="spons-h">Our sponsors keep <em>the shop running.</em></p>
+    <ul class="lg big">{primary.map((s) => <li>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{s.img ? <Image src={s.img} alt={s.name} width={480} /> : s.name}</a> : (s.img ? <Image src={s.img} alt={s.name} width={480} /> : s.name)}</li>)}</ul>
+    <ul class="lg">{supporting.map((s) => <li>{s.website ? <a href={s.website} rel="noopener" aria-label={`${s.name} website`}>{s.img ? <Image src={s.img} alt={s.name} width={320} /> : s.name}</a> : (s.img ? <Image src={s.img} alt={s.name} width={320} /> : s.name)}</li>)}</ul>
+  </div></section>
 </Base>
 
 <script>
@@ -127,7 +133,7 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
   .run span{padding-right:48px}
   @keyframes run{to{transform:translateX(-50%)}}
   /* Countdown: slanted top, flat bottom, timer sits on the bottom edge. */
-  .count{position:relative;z-index:1;background:var(--navy);margin-top:calc(var(--s) * -1);padding-top:calc(var(--s) + 40px);clip-path:polygon(0 var(--s),100% 0,100% 100%,0 100%)}
+  .count{position:relative;z-index:1;background:var(--navy);margin-top:calc(var(--s) * -1);padding-top:calc(var(--s) + 40px);padding-bottom:56px;clip-path:polygon(0 var(--s),100% 0,100% 100%,0 100%)}
   .count .in{display:flex;flex-wrap:wrap;gap:24px 40px;align-items:flex-end;justify-content:space-between}
   .count .big{font-size:clamp(3.5rem,7vw,6.25rem);text-transform:uppercase;line-height:.9}
   .when{margin-top:10px;font-size:15px}
@@ -161,14 +167,22 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
   .strip li.ph{display:flex;align-items:center;justify-content:center;background:#e3e8eb;border:2px dashed var(--navy);color:var(--navy);font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
   .asks{display:grid;grid-template-columns:1fr 1fr}
   .ask{padding:88px 64px;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
-  .ask.join{padding-left:max(16px,calc((100vw - 1240px)/2));background:var(--cream);color:var(--black)}
-  .ask.back{padding-right:max(16px,calc((100vw - 1240px)/2));background:var(--deep)}
+  .ask.join{padding-left:max(16px,calc((100vw - 1240px)/2));background:var(--navy);color:var(--white);border-right:4px solid var(--green)}
+  .ask.back{padding-right:max(16px,calc((100vw - 1240px)/2));background:var(--navy)}
   .ask h2{font-size:clamp(2rem,3.5vw,3rem)}
-  .ask.join h2{color:var(--navy)}
+  .ask.join h2{color:var(--green)}
   .ask p{max-width:46ch}
-  .sp{list-style:none;display:flex;flex-wrap:wrap;gap:10px 26px;font-weight:700;font-size:18px;color:var(--lgrey)}
-  .sp a{color:inherit;text-decoration:underline;text-decoration-color:rgba(188,188,188,.4);text-underline-offset:.25em}
-  .sp a:hover{color:var(--green);text-decoration-color:currentColor}
+  .spons{padding:88px 0}
+  .spons-h{font:900 clamp(2.6rem,5.5vw,5rem)/.98 var(--head);text-transform:uppercase;color:var(--navy);max-width:1000px;margin-bottom:36px}
+  .spons-h em{font-style:normal;background:var(--green);padding:0 10px}
+  .lg{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:16px}
+  .lg.big{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  .lg li{background:var(--white);border:1px solid #e4e4e4;height:112px;display:grid;place-items:center;padding:16px;text-align:center;font-weight:700;color:var(--navy)}
+  .lg.big li{height:200px;padding:28px;border:2px solid var(--navy)}
+  .lg a{display:grid;place-items:center;width:100%;height:100%}
+  .lg img{max-height:72px;max-width:100%;width:auto;object-fit:contain}
+  .lg.big img{max-height:140px}
+  .lg li:hover{border-color:var(--green)}
   @keyframes spin{to{transform:rotate(360deg)}}
   @media (max-width:1000px){
     .hero,.band,.count{clip-path:none;margin-top:0;padding-bottom:40px}
@@ -180,6 +194,7 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
     .card{margin:-40px 0 0 24px}
     .asks{grid-template-columns:1fr}
     .ask,.ask.join,.ask.back{padding:64px var(--gutter)}
+    .ask.join{border-right:0;border-bottom:4px solid var(--green)}
     .glow,.storm :global(.rings),.run{animation:none}
     }
   @media (prefers-reduced-motion:reduce),(pointer:coarse){.glow,.storm :global(.rings),.run{animation:none}}

@@ -2,8 +2,11 @@
 year: "2024"
 name: "SoundByte"
 game: "Crescendo"
-awards:
-  - "Excellence in Engineering Award [District]"
+events:
+  - name: "FIT District Houston Event"
+    level: "District"
+    awards:
+      - "Excellence in Engineering Award"
 photos:
   - "assets/DSC_9026.jpg"
   - "assets/DSC_9082.jpg"

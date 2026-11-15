@@ -68,7 +68,7 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/'
       <a href="/" class="logo" aria-label="VorTX 3735 home"><img src="/images/logotype-white.png" alt="VorTX 3735" width="180" height="48"></a>
       <ul class="links" aria-label="Social links and contact">
         {socials.map((l) => <li><a href={l.href} rel="noopener">{l.label}</a></li>)}
-        <li><a class="mail" href={`mailto:${site.email}`}>{site.email}</a></li>
+        <li><a class="mail" href={`mailto:${site.email}`} aria-label={`Email ${site.email}`}>Email</a></li>
         <li><a class="sup" href="/support-us/">Support us</a></li>
       </ul>
     </div>
@@ -116,7 +116,6 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/'
   .links{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:10px 24px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
   .links a{text-decoration:underline}
   .links a:hover{color:var(--green)}
-  .links .mail{text-transform:none;letter-spacing:0;font-size:15px}
   .links .sup{color:var(--green);text-decoration:none}
   .legal{margin-top:28px;font-size:13px}
 </style>

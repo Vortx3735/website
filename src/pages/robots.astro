@@ -1,71 +1,146 @@
 ---
 import { render } from 'astro:content';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import { robots, photo, parseAward } from '../lib/content';
-const list = await Promise.all((await robots()).map(async (r) => ({
-  ...r.data,
-  id: r.id,
-  imgs: r.data.photos.map((p) => photo('robots', p)).filter((i) => i !== null),
-  Content: (await render(r)).Content,
-})));
+const list = await Promise.all((await robots()).map(async (r) => {
+  const imgs = r.data.photos.map((p) => photo('robots', p)).filter((i) => i !== null);
+  // A larger copy of each photo for the expanded view.
+  const full = await Promise.all(imgs.map(async (i) => (await getImage({ src: i, width: 1800 })).src));
+  return { ...r.data, id: r.id, imgs, full };
+}));
+const cur = list[0];
+const tribute = photo('robots', cur.tribute_photo);
+const Story = (await render((await robots())[0])).Content;
+const results = cur.awards.map(parseAward).map((a) => `${a.name}${a.detail ? ` (${a.detail})` : ''}`).join(' // ');
+const specLabels = ['Drivetrain', 'Scoring', 'Intake', 'Weight'];
+const hasSpecs = !!cur.specs;
 ---
-<Base title="Robots" description="Every VorTX and Klein Bots robot since 2011.">
-  <PageHead title="Our robots" eyebrow="Robots / 2011 to now" lead="Every robot since 2011, newest first." />
-  <section class="section light after-head"><div class="wrap list">
-    {list.map((r) => (
-      <article class="robot" id={r.id}>
-        <div class="main">
+<Base title="Robots" description="Meet Noah's Ark, our 2026 robot, and every VorTX and Klein Bots robot since 2011.">
+  <PageHead eyebrow={`Robots / ${cur.year}`} title={`Meet ${cur.name}`} lead={`Our ${cur.year} competition robot, named for alumnus Noah Lewis.`} />
+  {results && <div class="results"><div class="wrap">{results}</div></div>}
+  <section class="section light story"><div class="wrap two">
+    <div class="pic"><div class="photo">{cur.imgs[0] && <Image src={cur.imgs[0]} alt={`${cur.name}, our ${cur.year} robot`} width={1000} loading="eager" />}</div></div>
+    <div class="md"><Story /></div>
+  </div></section>
+  <section class="section grey"><div class="wrap">
+    <h2 class="h big">Remembering <em>Noah</em></h2>
+    <figure class="tribute">{tribute ? <Image src={tribute} alt="Remembering Noah Lewis, with VorTX teammates" width={1200} /> : <div class="ph">Photo of Noah</div>}</figure>
+  </div></section>
+  {hasSpecs && <section class="section navy"><div class="wrap">
+    <h2 class="h big">Spec sheet</h2>
+    <div class="specs">{specLabels.map((l) => <div><span>{l}</span><b>{cur.specs?.[l.toLowerCase()] ?? '[SPEC]'}</b></div>)}</div>
+  </div></section>}
+  <section class="section light"><div class="wrap">
+    <h2 class="h big">Every <em>robot</em></h2>
+    <p class="sub">One robot a season since 2011, newest first.</p>
+    <ul class="cards">{list.map((r) => (
+      <li id={r.id}>
+        <div class="media">
           <div class="track" tabindex={r.imgs.length > 1 ? 0 : undefined} aria-label={r.imgs.length > 1 ? `${r.name} photos` : undefined}>
-            {r.imgs.length === 0 && <div class="photo slide"></div>}
-            {r.imgs.map((img, i) => <div class="photo slide"><Image src={img} alt={`${r.name}, our ${r.year} robot${r.imgs.length > 1 ? `, photo ${i + 1} of ${r.imgs.length}` : ''}`} width={800} loading={i === 0 ? 'eager' : 'lazy'} /></div>)}
+            {r.imgs.length === 0 && <div class="slide"></div>}
+            {r.imgs.map((img, i) => <div class="slide" data-full={r.full[i]}><Image src={img} alt={`${r.name}, our ${r.year} robot${r.imgs.length > 1 ? `, photo ${i + 1} of ${r.imgs.length}` : ''}`} width={700} loading="lazy" /></div>)}
           </div>
+          {r.imgs.length > 0 && <button type="button" class="zoom" aria-label={`Expand ${r.name} photo`}>⤢</button>}
           {r.imgs.length > 1 && <>
             <button type="button" class="nav prev" aria-label="Previous photo">‹</button>
             <button type="button" class="nav next" aria-label="Next photo">›</button>
             <span class="count" aria-hidden="true">1 / {r.imgs.length}</span>
           </>}
         </div>
-        <div class="txt">
-          <span class="yr">{r.year}</span>
-          <h2 class="h">{r.name}</h2>
-          <p class="game">{r.game}</p>
-          <div class="md"><r.Content /></div>
-          {r.awards.length > 0 && <ul class="aw">{r.awards.map(parseAward).map((a) => <li>{a.name}{a.detail && ` (${a.detail})`}</li>)}</ul>}
+        <div class="info">
+          <div class="yr">{r.year}</div>
+          <div class="nm">{r.name}</div>
+          <div class="gm">{r.game}</div>
+          {r.awards.map(parseAward).map((a) => <div class="aw">{a.name}{a.detail && ` (${a.detail})`}</div>)}
         </div>
-      </article>
-    ))}
+      </li>
+    ))}</ul>
   </div></section>
 </Base>
+<dialog id="lightbox" aria-label="Expanded photo">
+  <button type="button" class="x" aria-label="Close">×</button>
+  <img alt="" />
+</dialog>
 <script>
-  // Photo scroller: arrows and swipe/scroll move one photo at a time.
-  document.querySelectorAll<HTMLElement>('.robot .main').forEach((box) => {
+  // Photo scroller: arrows and swipe/scroll move one photo at a time, and wrap around at the ends.
+  const box0 = document.getElementById('lightbox') as HTMLDialogElement;
+  const big = box0.querySelector('img')!;
+  box0.addEventListener('click', (e) => { if (e.target !== big) box0.close(); });
+  document.querySelectorAll<HTMLElement>('.media').forEach((box) => {
     const track = box.querySelector<HTMLElement>('.track')!;
     const count = box.querySelector<HTMLElement>('.count');
     const n = track.children.length;
-    const go = (d: number) => track.scrollBy({ left: d * track.clientWidth, behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' });
+    const reduce = () => (matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth') as ScrollBehavior;
+    const idx = () => Math.round(track.scrollLeft / track.clientWidth);
+    const go = (d: number) => {
+      const next = idx() + d;
+      if (next >= n) track.scrollTo({ left: 0, behavior: reduce() });
+      else if (next < 0) track.scrollTo({ left: (n - 1) * track.clientWidth, behavior: reduce() });
+      else track.scrollBy({ left: d * track.clientWidth, behavior: reduce() });
+    };
     box.querySelector('.prev')?.addEventListener('click', () => go(-1));
     box.querySelector('.next')?.addEventListener('click', () => go(1));
-    track.addEventListener('scroll', () => { if (count) count.textContent = `${Math.round(track.scrollLeft / track.clientWidth) + 1} / ${n}`; }, { passive: true });
+    track.addEventListener('scroll', () => { if (count) count.textContent = `${idx() + 1} / ${n}`; }, { passive: true });
+    const open = () => {
+      const slide = track.children[idx()] as HTMLElement;
+      big.src = slide.dataset.full ?? '';
+      big.alt = slide.querySelector('img')?.alt ?? '';
+      box0.showModal();
+    };
+    box.querySelector('.zoom')?.addEventListener('click', open);
+    track.addEventListener('click', open);
   });
 </script>
 <style>
-  .list{display:grid;gap:56px}
-  .robot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:40px;align-items:center}
-  .robot .main{position:relative;aspect-ratio:4/3;border-bottom:10px solid var(--green)}
+  .section.grey{background:#f2f2f2;color:black}
+  .section.navy{background:var(--navy);color:var(--white)}
+  .results{background:var(--green);color:var(--navy);margin-top:calc(var(--s) * -.6);position:relative;z-index:2}
+  .results .wrap{padding-block:18px;font:900 clamp(1.2rem,2.4vw,2rem)/1.15 var(--head);text-transform:uppercase;letter-spacing:.02em}
+  .story{padding-top:72px}
+  .two{display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start}
+  .two .pic{flex:1 1 560px;position:relative}
+  .two .pic::before{content:"";position:absolute;left:-16px;top:-16px;right:40px;bottom:40px;background:var(--green)}
+  .two .photo{position:relative;aspect-ratio:3/2;margin:16px 0 0 16px}
+  .two .md{flex:1 1 400px;font-size:17px}
+  h2.big{font-size:clamp(3rem,7vw,6rem);text-transform:uppercase;color:var(--navy);line-height:.9;margin-bottom:28px}
+  h2.big em{font-style:normal;background:var(--green);padding:0 10px}
+  .navy h2.big{color:var(--white)}
+  .tribute{max-width:583px;margin-inline:auto;border-bottom:8px solid var(--green)}
+  .tribute :global(img){width:100%;height:auto;display:block}
+  .tribute .ph{aspect-ratio:3/2}
+  .ph{display:flex;align-items:center;justify-content:center;text-align:center;background:#e3e8eb;border:2px dashed var(--navy);color:var(--navy);font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:12px}
+  .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));border:4px solid var(--green)}
+  .specs div{padding:28px;border-right:4px solid var(--green)}
+  .specs div:last-child{border-right:0}
+  .specs span{display:block;font-weight:800;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--green)}
+  .specs b{font:900 2.6rem/1.1 var(--head);text-transform:uppercase}
+  .sub{font-size:18px;color:var(--navy);margin:-12px 0 28px}
+  .cards{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .cards li{border:4px solid var(--navy);background:var(--white);color:var(--navy);scroll-margin-top:100px}
+  .media{position:relative;aspect-ratio:3/2;border-bottom:6px solid var(--green)}
   .track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
   .track::-webkit-scrollbar{display:none}
-  .slide{flex:0 0 100%;height:100%;scroll-snap-align:start}
-  .slide :global(img){width:100%;height:100%;object-fit:cover}
-  .nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border:0;background:var(--navy);color:var(--white);font:900 28px/1 var(--head);cursor:pointer;opacity:.9}
+  .slide{flex:0 0 100%;height:100%;scroll-snap-align:start;background:#e3e8eb}
+  .slide :global(img){width:100%;height:100%;object-fit:cover;display:block}
+  .nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border:0;background:var(--navy);color:var(--white);font:900 26px/1 var(--head);cursor:pointer;opacity:.9}
   .nav:hover,.nav:focus-visible{background:var(--green);color:var(--navy)}
   .prev{left:0}.next{right:0}
   .count{position:absolute;right:0;bottom:0;background:var(--navy);color:var(--white);font:700 12px/1 var(--body);letter-spacing:.1em;padding:6px 10px}
-  .yr{font:900 40px/1 var(--head);color:var(--navy);font-variant-numeric:tabular-nums}
-  .robot h2{margin:6px 0 4px}
-  .game{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:15px;color:var(--navy);margin-bottom:12px}
-  .aw{list-style:none;margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
-  .aw li{border:2px solid var(--navy);color:var(--navy);font-size:15px;font-weight:700;padding:4px 10px}
-  @media (max-width:760px){.robot{grid-template-columns:1fr;gap:20px}}
+  .zoom{position:absolute;top:8px;right:8px;width:40px;height:40px;border:0;background:var(--navy);color:var(--white);font-size:22px;line-height:1;cursor:zoom-in;opacity:0;transition:opacity .2s}
+  .media:hover .zoom,.zoom:focus-visible{opacity:.95}
+  .zoom:hover{background:var(--green);color:var(--navy)}
+  @media (hover:none){.zoom{opacity:.95}}
+  .track{cursor:zoom-in}
+  #lightbox{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100vw;height:100vh;overflow:hidden}
+  #lightbox::backdrop{background:rgba(1,33,49,.92)}
+  #lightbox[open]{display:grid;place-items:center}
+  #lightbox img{max-width:min(94vw,1600px);max-height:90vh;object-fit:contain;border-bottom:6px solid var(--green)}
+  #lightbox .x{position:absolute;top:16px;right:16px;width:48px;height:48px;border:0;background:var(--green);color:var(--navy);font:900 32px/1 var(--head);cursor:pointer}
+  .info{padding:16px 18px 18px}
+  .yr{font:900 3rem/.9 var(--head)}
+  .nm{font-weight:800;font-size:20px;margin-top:6px}
+  .gm{font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);margin:2px 0 8px}
+  .aw{font-size:14px;padding:3px 0;border-top:1px solid #d9dfe3}
 </style>

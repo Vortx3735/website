@@ -6,7 +6,7 @@ import { galleryPhotos } from '../lib/content';
 // Photos saved in content/gallery/assets fill the tiles in order; the rest stay placeholders. Photos of students need a media release.
 const real = galleryPhotos();
 const spans = ['big', '', '', '', '', 'wide', '', ''];
-const sections = ['On the field', 'In the shop'].map((title, n) => ({
+const sections = ['On the field', 'In the shop', 'Outreach'].map((title, n) => ({
   title,
   tiles: spans.map((span, i) => ({ span, img: real[n * 8 + i] ?? null })),
 }));
@@ -14,7 +14,7 @@ const sections = ['On the field', 'In the shop'].map((title, n) => ({
 <Base title="Gallery" description="Photos from VorTX seasons since 2011.">
   <PageHead title="Our Gallery" lead="Competitions, shop days and outreach." />
   {sections.map((sec, n) => (
-    <section class:list={['section', n === 0 ? 'light after-head' : 'grey']}><div class="wrap">
+    <section class:list={['section', n === 0 ? 'light after-head' : n === 1 ? 'grey' : 'light']}><div class="wrap">
       <h2 class="h">{sec.title}</h2>
       <div class="grid">{sec.tiles.map((t) => (
         <div class:list={['tile', t.span, { ph: !t.img }]}>{t.img ? <Image src={t.img} alt="" width={900} /> : 'Photo'}</div>

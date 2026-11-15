@@ -23,9 +23,23 @@ const robots = defineCollection({
     year: z.coerce.string(),
     name: z.string(),
     game: z.string(),
-    awards: z.array(z.string()).nullish().transform((a) => a ?? []),
+    // One entry per event where we won something. Mark an event we won outright with `won: true`.
+    events: z.array(z.object({
+      name: z.string(),
+      level: z.string().nullish(),
+      won: z.boolean().default(false),
+      awards: z.array(z.string()),
+    })).nullish().transform((a) => a ?? []),
     photos: z.array(z.string()).nullish().transform((a) => a ?? []),
-  }),
+    // Optional spec sheet shown for the newest robot: drivetrain, scoring, intake, weight.
+    specs: z.record(z.string()).nullish(),
+    // Optional photo for the tribute section (newest robot only).
+    tribute_photo: z.string().nullish(),
+  }).transform((d) => ({
+    ...d,
+    // Every award from every event, each name once, for the robot cards and the home page.
+    awards: [...new Set(d.events.flatMap((e) => e.awards))],
+  })),
 });
 
 const sponsors = defineCollection({
