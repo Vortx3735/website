@@ -78,3 +78,10 @@ main{flex:1;container-type:inline-size;--s:5cqw;overflow-x:clip}
   .outline.reveal{animation:title-in 1s cubic-bezier(.2,.8,.2,1) .2s both}
 }
 @media (prefers-reduced-motion:reduce),(pointer:coarse){.page-head .rings{animation:none}}
+
+/* Page-to-page transitions: the header stays put and the green tab bar slides to the new tab. */
+@media (prefers-reduced-motion:no-preference){
+  @view-transition{navigation:auto}
+  ::view-transition-group(tab-bar){animation-duration:.5s;animation-timing-function:cubic-bezier(.7,0,.2,1)}
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:.25s}
+}

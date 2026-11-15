@@ -4,7 +4,6 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import Rings from '../components/Rings.astro';
 import { page, robots, sponsors, photo, settings, parseAward } from '../lib/content';
-import { existsSync } from 'node:fs';
 
 const home = (await page('home')).data as Record<string, string>;
 const site = await settings();
@@ -15,9 +14,8 @@ const currentImg = photo('robots', current.data.photos[0]);
 const ticker = all.filter((r) => Number(r.data.year.slice(0, 4)) >= 2019).flatMap((r) =>
   r.data.awards.map(parseAward).map((a) => `${r.data.year.slice(0, 4)} ${a.name}${a.detail ? ` (${a.detail})` : ''}`));
 const shots = all.slice(0, 6).map((r) => ({ img: photo('robots', r.data.photos[0]), name: r.data.name, year: r.data.year.slice(0, 4) })).filter((s) => s.img);
-// The time-lapse video and its still frame live in public/media/.
-const video = existsSync('public/media/build-season-timelapse.mp4') ? '/media/build-season-timelapse.mp4' : null;
-const poster = '/media/build-season-timelapse.jpg';
+// Hero background picture.
+const poster = '/images/arena-hero.jpg';
 const sponsorList = (await sponsors()).map((s) => s.data);
 const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
 ---
@@ -25,7 +23,6 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
   <section class="hero">
     <div class="photo hero-media">
       <img src={poster} alt="" fetchpriority="high">
-      {video && <video autoplay muted loop playsinline preload="metadata" poster={poster} src={video}></video>}
     </div>
     <div class="storm" aria-hidden="true"><div class="glow"></div><Rings /></div>
     <div class="wrap hero-in">
@@ -34,10 +31,6 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
       <h1 class="outline reveal">{home.headline} <em>{home.headline_highlight}</em></h1>
       <div class="acts"><a class="btn btn-go" href="/join-us/">Student sign up <Icon name="arrow" /></a></div>
     </div>
-    {video && <button class="vidctl" type="button" aria-label="Pause the time-lapse" aria-pressed="false">
-      <svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>
-      <svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3l8 5-8 5z"/></svg>
-    </button>}
   </section>
 
   <div class="band" aria-label="Awards">
@@ -98,17 +91,6 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
 </Base>
 
 <script>
-  const btn = document.querySelector<HTMLButtonElement>('.vidctl');
-  const vid = document.querySelector<HTMLVideoElement>('.hero-media video');
-  if (btn && vid) {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const set = (paused: boolean) => {
-      btn.setAttribute('aria-pressed', String(paused));
-      btn.setAttribute('aria-label', paused ? 'Play the time-lapse' : 'Pause the time-lapse');
-    };
-    if (reduce.matches) { vid.pause(); vid.removeAttribute('autoplay'); set(true); }
-    btn.addEventListener('click', () => { if (vid.paused) { vid.play(); set(false); } else { vid.pause(); set(true); } });
-  }
   // Countdown to kickoff: reads the date from content/settings.md (kickoff_iso).
   const box = document.querySelector<HTMLElement>('[data-kickoff]');
   const target = Date.parse(box?.dataset.kickoff ?? '');
@@ -129,16 +111,11 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
   /* Hero. The bottom edge is slanted; everything below it overlaps the slant. */
   .hero{position:relative;overflow:hidden;min-height:min(92svh,860px);display:grid;align-items:end;clip-path:polygon(0 0,100% 0,100% calc(100% - var(--s)),0 100%);padding-bottom:calc(var(--s) + 24px)}
   .hero-media{position:absolute;inset:0}
-  .hero-media img,.hero-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,51,76,.8) 0%,rgba(0,51,76,.7) 50%,rgba(1,33,49,.96) 100%)}
   .storm{position:absolute;right:-270px;top:-80px;width:900px;aspect-ratio:1;pointer-events:none}
   .glow{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0%,rgba(127,194,65,.5) 50%,transparent 100%);-webkit-mask:radial-gradient(circle,transparent 24%,#000 40%,#000 52%,transparent 68%);mask:radial-gradient(circle,transparent 24%,#000 40%,#000 52%,transparent 68%);animation:spin 14s linear infinite}
   .storm :global(.rings){position:absolute;inset:14.5%;width:71%;height:71%;animation:spin 36s linear infinite;opacity:.95}
-  .vidctl{position:absolute;z-index:3;right:var(--gutter);bottom:calc(var(--s) + 20px);width:44px;height:44px;border-radius:50%;border:0;background:rgba(1,33,49,.72);color:var(--white);display:grid;place-items:center;cursor:pointer;transition:background .3s,color .3s}
-  .vidctl:hover{background:var(--green);color:var(--deep)}
-  .vidctl svg{width:16px;height:16px;grid-area:1/1}
-  .vidctl .i-play,.vidctl[aria-pressed="true"] .i-pause{display:none}
-  .vidctl[aria-pressed="true"] .i-play{display:block}
   .hero-in{position:relative;z-index:1;padding-top:120px}
   .tri{width:102px;height:auto;margin-bottom:20px}
   .hero-in .eyebrow{margin-bottom:16px}
@@ -203,8 +180,6 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
     .asks{grid-template-columns:1fr}
     .ask,.ask.join,.ask.back{padding:64px var(--gutter)}
     .glow,.storm :global(.rings),.run{animation:none}
-    .vidctl{bottom:20px}
-  }
+    }
   @media (prefers-reduced-motion:reduce),(pointer:coarse){.glow,.storm :global(.rings),.run{animation:none}}
-  @media (prefers-reduced-motion:reduce){.hero-media video{display:none}}
 </style>

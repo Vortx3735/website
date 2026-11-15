@@ -9,29 +9,18 @@ const hasBlog = (await posts()).length > 0;
 interface Props { title?: string; description?: string }
 const { title, description = 'FRC Team 3735 VorTX, the Klein ISD robotics team in Spring, Texas.' } = Astro.props;
 const fullTitle = title ? `${title} · VorTX 3735` : 'VorTX 3735 · FRC robotics, Klein ISD';
-type Item = { href: string; label: string; children?: { href: string; label: string }[] };
+type Item = { href: string; label: string };
+// One flat row of tabs, same order as the design. About's subpages (mission, history, leadership, coaches and mentors) are linked from the About page, and the programming docs from Resources.
 const nav: Item[] = [
   { href: '/', label: 'Home' },
-  { href: '/about/', label: 'About', children: [
-    { href: '/about/', label: 'About VorTX' },
-    { href: '/our-mission/', label: 'Our mission' },
-    { href: '/our-history/', label: 'Our history' },
-    { href: '/leadership/', label: 'Leadership' },
-    { href: '/coaches-mentors/', label: 'Coaches & mentors' },
-    { href: '/faq/', label: 'FAQ' },
-  ] },
+  { href: '/about/', label: 'About' },
   { href: '/robots/', label: 'Robots' },
   { href: '/awards/', label: 'Awards' },
   { href: '/gallery/', label: 'Gallery' },
   { href: '/calendar/', label: 'Calendar' },
-  { href: '/resources/', label: 'Resources', children: [
-    { href: '/resources/', label: 'All resources' },
-    { href: '/docs/', label: 'Programming docs' },
-    { href: site.brand_guide_link, label: 'Brand guide' },
-    { href: 'https://github.com/Vortx3735', label: 'Code on GitHub' },
-    ...(hasBlog ? [{ href: '/blog/', label: 'Blog' }] : []),
-  ] },
+  { href: '/resources/', label: 'Resources' },
   { href: '/sponsors/', label: 'Sponsors' },
+  ...(hasBlog ? [{ href: '/blog/', label: 'Blog' }] : []),
 ];
 const socials = [
   { label: 'Instagram', href: site.instagram_link },
@@ -40,7 +29,11 @@ const socials = [
   { label: 'X', href: site.x_link },
 ].filter((l) => l.href);
 const path = Astro.url.pathname;
-const isCurrent = (n: Item) => n.href === '/' ? path === '/' : [n.href, ...(n.children ?? []).map((c) => c.href)].some((h) => h.startsWith('/') && path.startsWith(h)) || (n.href === '/resources/' && path.startsWith('/docs/'));
+const aboutPages = ['/about/', '/our-mission/', '/our-history/', '/leadership/', '/coaches-mentors/', '/faq/'];
+const isCurrent = (n: Item) => n.href === '/' ? path === '/'
+  : n.href === '/about/' ? aboutPages.some((h) => path.startsWith(h))
+  : n.href === '/resources/' ? path.startsWith('/resources/') || path.startsWith('/docs/')
+  : path.startsWith(n.href);
 ---
 <!doctype html>
 <html lang="en">
@@ -51,7 +44,7 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/' : [n.href, ...(n.ch
   <meta name="description" content={description}>
   <meta property="og:title" content={fullTitle}>
   <meta property="og:description" content={description}>
-  <meta property="og:image" content={new URL('/media/build-season-timelapse.jpg', Astro.site)}>
+  <meta property="og:image" content={new URL('/images/arena-hero.jpg', Astro.site)}>
   <meta name="theme-color" content="#012131">
   <link rel="icon" href="/favicon.png">
 </head>
@@ -62,15 +55,7 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/' : [n.href, ...(n.ch
       <a href="/" class="logo" aria-label="VorTX 3735 home"><img src="/images/logotype-white.png" alt="VorTX 3735" width="150" height="40"></a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
       <nav id="main-nav" aria-label="Main">
-        {nav.map((n, i) => n.children ? (
-          <div class="dd">
-            <a href={n.href} class="top" aria-current={isCurrent(n) ? 'page' : undefined}>{n.label}</a>
-            <button class="dd-btn" type="button" aria-expanded="false" aria-controls={`sub-${i}`} aria-label={`${n.label} menu`}><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></button>
-            <ul class="sub" id={`sub-${i}`}>
-              {n.children.map((c) => <li><a href={c.href} aria-current={c.href.startsWith('/') && path === c.href ? 'page' : undefined}>{c.label}</a></li>)}
-            </ul>
-          </div>
-        ) : <a href={n.href} aria-current={isCurrent(n) ? 'page' : undefined}>{n.label}</a>)}
+        {nav.map((n) => <a href={n.href} aria-current={isCurrent(n) ? 'page' : undefined}>{n.label}</a>)}
         <a class="mob" href="/support-us/">Support us</a><a class="mob" href="/join-us/">Join the team</a>
       </nav>
       <div class="ctas"><a class="btn btn-line" href="/support-us/">Support us</a><a class="btn btn-go" href="/join-us/">Join the team</a></div>
@@ -91,20 +76,11 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/' : [n.href, ...(n.ch
   <script>
     const b = document.querySelector('.menu-btn'), n = document.getElementById('main-nav');
     b?.addEventListener('click', () => { const o = n.classList.toggle('open'); b.setAttribute('aria-expanded', String(o)); });
-    const dds = [...document.querySelectorAll('.dd')];
-    const closeAll = (except) => dds.forEach((d) => { if (d !== except) { d.classList.remove('show'); d.querySelector('.dd-btn')?.setAttribute('aria-expanded', 'false'); } });
-    dds.forEach((d) => {
-      const btn = d.querySelector('.dd-btn');
-      btn?.addEventListener('click', () => { const o = d.classList.toggle('show'); btn.setAttribute('aria-expanded', String(o)); closeAll(d); });
-      d.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeAll(); btn?.focus(); } });
-      d.addEventListener('focusout', (e) => { if (!d.contains(e.relatedTarget)) { d.classList.remove('show'); btn?.setAttribute('aria-expanded', 'false'); } });
-    });
-    document.addEventListener('click', (e) => { if (!e.target.closest('.dd')) closeAll(); });
   </script>
 </body>
 </html>
 <style>
-  .site-header{background:var(--navy);position:sticky;top:0;z-index:50;box-shadow:0 4px 0 var(--green)}
+  .site-header{background:var(--navy);position:sticky;top:0;z-index:50;box-shadow:0 4px 0 var(--green);view-transition-name:site-header}
   .site-header .wrap{width:min(1400px,100% - 32px)}
   .bar{display:flex;align-items:center;gap:20px;padding:14px 0}
   .logo{flex:none}
@@ -112,24 +88,16 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/' : [n.href, ...(n.ch
   .menu-btn{display:none;background:none;border:0;color:inherit;cursor:pointer;width:44px;height:44px;place-items:center;margin-left:auto}
   .menu-btn svg{width:24px;height:24px}
   nav{display:flex;align-items:center;gap:6px;margin-inline:auto 0}
-  nav a.top,nav>a{position:relative;white-space:nowrap;font:900 14px/1 var(--head);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;padding:20px 8px;transition:color .2s,transform .2s}
-  nav a:hover{color:var(--green)}
-  nav a[aria-current]{color:var(--green)}
-  nav>a[aria-current]::after,nav a.top[aria-current]::after{content:"";position:absolute;left:8px;right:8px;bottom:-14px;height:6px;background:var(--green)}
+  nav>a{position:relative;white-space:nowrap;font:900 14px/1 var(--head);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;padding:20px 10px;transition:color .2s,transform .2s}
+  nav>a:hover{color:var(--green);transform:translateY(-3px)}
+  nav>a[aria-current]{color:var(--green)}
+  /* The green bar under the current tab. With view transitions it slides from tab to tab as you move between pages. */
+  nav>a[aria-current]::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:6px;background:var(--green);view-transition-name:tab-bar}
   .ctas{display:flex;gap:10px}
   .ctas .btn{padding:13px 20px;font-size:13px}
-  .dd{position:relative;display:flex;align-items:center}
-  .dd-btn{background:none;border:0;color:inherit;cursor:pointer;width:22px;height:36px;display:grid;place-items:center;margin-left:-8px}
-  .dd-btn svg{width:12px;height:12px;transition:transform .2s}
-  .dd-btn:hover{color:var(--green)}
-  .dd.show .dd-btn svg{transform:rotate(180deg)}
-  .sub{list-style:none;position:absolute;top:calc(100% + 14px);left:0;min-width:230px;background:var(--deep);border-top:4px solid var(--green);padding:8px 0;box-shadow:0 18px 40px rgba(0,0,0,.35);opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .15s,visibility .15s;z-index:20}
-  .sub a{display:block;padding:12px 18px;font-weight:600;white-space:nowrap}
-  .sub a:hover{background:var(--navy)}
-  .dd:hover .sub,.dd.show .sub{opacity:1;visibility:visible;transform:none}
-  @media (prefers-reduced-motion:reduce){.sub,.dd-btn svg{transition:none}}
-  @media (max-width:1320px){.ctas .btn-line{display:none}}
   .mob{display:none}
+  @media (prefers-reduced-motion:reduce){nav>a{transition:none}nav>a:hover{transform:none}}
+  @media (max-width:1320px){.ctas .btn-line{display:none}}
   @media (max-width:1180px){
     .mob{display:block}
     .menu-btn{display:grid}
@@ -137,13 +105,9 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/' : [n.href, ...(n.ch
     .ctas{display:none}
     nav{display:none;position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:stretch;gap:0;background:var(--navy);padding:8px var(--gutter) 20px;box-shadow:0 4px 0 var(--green)}
     nav.open{display:flex}
-    nav a.top,nav>a{padding:16px 0}
-    nav>a[aria-current]::after,nav a.top[aria-current]::after{display:none}
-    .dd{display:block}
-    .dd-btn{display:none}
-    .sub{position:static;opacity:1;visibility:visible;transform:none;border:0;box-shadow:none;padding:0;min-width:0;background:none}
-    .sub a{padding:12px 0 12px 20px;font-size:15px}
-    .sub li:first-child{display:none}
+    nav>a{padding:16px 0}
+    nav>a:hover{transform:none}
+    nav>a[aria-current]::after{display:none}
   }
   .site-footer{background:var(--navy);padding:44px 0 32px;font-size:15px;position:relative;z-index:2}
   .site-footer .row{display:flex;flex-wrap:wrap;gap:20px 36px;justify-content:space-between;align-items:center}
