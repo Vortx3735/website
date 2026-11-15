@@ -16,29 +16,56 @@ const list = await Promise.all((await robots()).map(async (r) => ({
   <section class="section light after-head"><div class="wrap list">
     {list.map((r) => (
       <article class="robot" id={r.id}>
-        <div class="photo main">{r.imgs[0] && <Image src={r.imgs[0]} alt={`${r.name}, our ${r.year} robot`} width={800} />}</div>
+        <div class="main">
+          <div class="track" tabindex={r.imgs.length > 1 ? 0 : undefined} aria-label={r.imgs.length > 1 ? `${r.name} photos` : undefined}>
+            {r.imgs.length === 0 && <div class="photo slide"></div>}
+            {r.imgs.map((img, i) => <div class="photo slide"><Image src={img} alt={`${r.name}, our ${r.year} robot${r.imgs.length > 1 ? `, photo ${i + 1} of ${r.imgs.length}` : ''}`} width={800} loading={i === 0 ? 'eager' : 'lazy'} /></div>)}
+          </div>
+          {r.imgs.length > 1 && <>
+            <button type="button" class="nav prev" aria-label="Previous photo">‹</button>
+            <button type="button" class="nav next" aria-label="Next photo">›</button>
+            <span class="count" aria-hidden="true">1 / {r.imgs.length}</span>
+          </>}
+        </div>
         <div class="txt">
           <span class="yr">{r.year}</span>
           <h2 class="h">{r.name}</h2>
           <p class="game">{r.game}</p>
           <div class="md"><r.Content /></div>
           {r.awards.length > 0 && <ul class="aw">{r.awards.map(parseAward).map((a) => <li>{a.name}{a.detail && ` (${a.detail})`}</li>)}</ul>}
-          {r.imgs.length > 1 && <div class="thumbs">{r.imgs.slice(1).map((s) => <Image src={s} alt="" width={192} />)}</div>}
         </div>
       </article>
     ))}
   </div></section>
 </Base>
+<script>
+  // Photo scroller: arrows and swipe/scroll move one photo at a time.
+  document.querySelectorAll<HTMLElement>('.robot .main').forEach((box) => {
+    const track = box.querySelector<HTMLElement>('.track')!;
+    const count = box.querySelector<HTMLElement>('.count');
+    const n = track.children.length;
+    const go = (d: number) => track.scrollBy({ left: d * track.clientWidth, behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' });
+    box.querySelector('.prev')?.addEventListener('click', () => go(-1));
+    box.querySelector('.next')?.addEventListener('click', () => go(1));
+    track.addEventListener('scroll', () => { if (count) count.textContent = `${Math.round(track.scrollLeft / track.clientWidth) + 1} / ${n}`; }, { passive: true });
+  });
+</script>
 <style>
   .list{display:grid;gap:56px}
   .robot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:40px;align-items:center}
-  .robot .main{aspect-ratio:4/3;border-bottom:10px solid var(--green)}
+  .robot .main{position:relative;aspect-ratio:4/3;border-bottom:10px solid var(--green)}
+  .track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+  .track::-webkit-scrollbar{display:none}
+  .slide{flex:0 0 100%;height:100%;scroll-snap-align:start}
+  .slide :global(img){width:100%;height:100%;object-fit:cover}
+  .nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border:0;background:var(--navy);color:var(--white);font:900 28px/1 var(--head);cursor:pointer;opacity:.9}
+  .nav:hover,.nav:focus-visible{background:var(--green);color:var(--navy)}
+  .prev{left:0}.next{right:0}
+  .count{position:absolute;right:0;bottom:0;background:var(--navy);color:var(--white);font:700 12px/1 var(--body);letter-spacing:.1em;padding:6px 10px}
   .yr{font:900 40px/1 var(--head);color:var(--navy);font-variant-numeric:tabular-nums}
   .robot h2{margin:6px 0 4px}
   .game{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:15px;color:var(--navy);margin-bottom:12px}
   .aw{list-style:none;margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
   .aw li{border:2px solid var(--navy);color:var(--navy);font-size:15px;font-weight:700;padding:4px 10px}
-  .thumbs{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
-  .thumbs img{width:96px;height:72px;object-fit:cover;border-radius:3px}
   @media (max-width:760px){.robot{grid-template-columns:1fr;gap:20px}}
 </style>
