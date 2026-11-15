@@ -1,0 +1,98 @@
+---
+// The About page: the blurb, mission, history, leadership, coaches and mentors, all from the notes in content/pages.
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Icon from '../components/Icon.astro';
+import { page, robots, photo } from '../lib/content';
+
+const about = await page('about');
+const history = await page('our-history');
+const mission = await page('our-mission');
+const leaders = await page('leadership');
+const people = await page('coaches-mentors');
+const { Content: AboutText } = await render(about);
+const { Content: HistoryText } = await render(history);
+
+// Pull list items out of a note. "- **Name** Role" becomes a name and a role; "- Name" is just a name.
+const items = (md: string) => md.split('\n').filter((l) => l.startsWith('- ')).map((l) => l.slice(2).trim());
+const nameRole = (l: string) => { const m = l.match(/^\*\*(.+?)\*\*,?\s*(.*)$/); return m ? { name: m[1], role: m[2] } : { name: l, role: '' }; };
+const body = (md: string | undefined) => md ?? '';
+const section = (md: string, heading: string) => { const m = md.split(/^## /m).find((s) => s.startsWith(heading)); return m ? m.slice(heading.length) : ''; };
+const lead = items(body(leaders.body)).map(nameRole);
+const coaches = items(section(body(people.body), 'Coaches'));
+const mentors = items(section(body(people.body), 'Mentors'));
+const statements = body(mission.body).split(/\n\s*\n/).map((t) => t.trim()).filter(Boolean);
+const current = (await robots())[0];
+const img = photo('robots', current.data.photos[0]);
+---
+<Base title="About" description={about.data.description}>
+  <PageHead title="Who we are" eyebrow="About / since 2011" lead={about.data.lead} />
+
+  <section class="section light after-head"><div class="wrap two">
+    <h2 class="big">One team,<br>five schools</h2>
+    <div class="prose md"><AboutText /></div>
+  </div></section>
+
+  <section class="section cream" id="our-mission"><div class="wrap">
+    <h2 class="big">Our mission</h2>
+    <div class="mission">{statements.map((t, i) => <div><b>{String(i + 1).padStart(2, '0')}</b><p>{t}</p></div>)}</div>
+  </div></section>
+
+  <section class="section light" id="our-history"><div class="wrap two">
+    <h2 class="big">Our history</h2>
+    <div class="prose md"><p class="kicker">{history.data.lead}</p><HistoryText /></div>
+  </div></section>
+
+  <section class="section navy" id="leadership"><div class="wrap">
+    <h2 class="big">Leadership</h2>
+    <ul class="cards">{lead.map((l) => <li><strong>{l.name}</strong>{l.role}</li>)}</ul>
+  </div></section>
+
+  <section class="section light robot"><div class="wrap two">
+    <div class="pic"><div class="photo">{img && <Image src={img} alt={`${current.data.name}, our ${current.data.year} robot`} width={900} />}</div></div>
+    <div><h2 class="big">Robots</h2><p>Every season is a new robot, designed, machined, wired and programmed by students. This year it is {current.data.name}.</p><p class="go"><a class="btn btn-dark" href="/robots/">See all robots <Icon name="arrow" /></a></p></div>
+  </div></section>
+
+  <section class="section cream" id="coaches-mentors"><div class="wrap">
+    <h2 class="big">Coaches</h2>
+    <ul class="cards light-cards">{coaches.map((n) => <li><strong>{n}</strong>Coach</li>)}</ul>
+  </div></section>
+
+  <section class="section light"><div class="wrap">
+    <h2 class="big">Mentors</h2>
+    <p class="sub">Engineers and professionals who give their time to the team.</p>
+    <ul class="names">{mentors.map((n) => <li>{n}</li>)}</ul>
+  </div></section>
+</Base>
+<style>
+  .section{scroll-margin-top:90px}
+  .big{font-size:clamp(3rem,7vw,6.5rem);text-transform:uppercase;line-height:.88;margin-bottom:28px;color:var(--navy)}
+  .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:48px;align-items:start}
+  .two .big{margin-bottom:0}
+  .kicker{font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);font-size:15px}
+  .mission{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+  .mission div{border-top:6px solid var(--green);padding-top:14px;color:var(--navy)}
+  .mission b{display:block;font:900 4rem/.9 var(--head);color:var(--green)}
+  .mission p{margin-top:8px;font-size:1.2rem;font-weight:600}
+  .navy{background:var(--navy);color:var(--white)}
+  .navy .big{color:var(--white)}
+  .cards{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+  .cards li{background:var(--white);color:var(--navy);border-left:6px solid var(--green);padding:12px 18px;min-width:210px;font:700 12px/1.2 var(--body);letter-spacing:.12em;text-transform:uppercase;transition:transform .25s,box-shadow .25s}
+  .cards strong{display:block;font:900 34px/1.1 var(--head);letter-spacing:0;text-transform:none;margin-bottom:2px}
+  .cards li:hover{transform:translate(-6px,-6px);box-shadow:12px 12px 0 var(--green)}
+  .light-cards{justify-content:flex-start}
+  .light-cards li{background:var(--white)}
+  .robot .pic{position:relative}
+  .robot .pic::before{content:"";position:absolute;left:-16px;top:-16px;right:32px;bottom:32px;background:var(--green)}
+  .robot .photo{position:relative;aspect-ratio:3/2;margin:16px 0 0 16px}
+  .robot .big{margin-bottom:18px}
+  .robot p{font-size:1.15rem;margin-bottom:24px}
+  .sub{color:var(--navy);max-width:640px;margin-bottom:28px;font-size:1.15rem}
+  .names{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .names li{border:4px solid var(--navy);padding:14px 18px;font:900 26px/1.1 var(--head);color:var(--navy);transition:transform .25s,box-shadow .25s}
+  .names li:hover{transform:translate(-6px,-6px);box-shadow:12px 12px 0 var(--green)}
+  @media (max-width:860px){.two{grid-template-columns:1fr;gap:24px}}
+  @media (prefers-reduced-motion:reduce){.cards li,.names li{transition:none}.cards li:hover,.names li:hover{transform:none}}
+</style>

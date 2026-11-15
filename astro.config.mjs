@@ -46,6 +46,11 @@ export default defineConfig({
     '/media/': '/',
     '/newsletters/': '/',
     '/social-media/': '/',
+    // These pages now live together on /about/.
+    '/our-mission/': '/about/#our-mission',
+    '/our-history/': '/about/#our-history',
+    '/leadership/': '/about/#leadership',
+    '/coaches-mentors/': '/about/#coaches-mentors',
   },
   integrations: [
     starlight({

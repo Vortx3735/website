@@ -7,7 +7,8 @@ import Icon from '../components/Icon.astro';
 import { settings } from '../lib/content';
 
 export async function getStaticPaths() {
-  const pages = await getCollection('pages', (p) => p.id !== 'home');
+  // home.md is the homepage, and the About pages are all shown together at /about/ (src/pages/about.astro).
+  const pages = await getCollection('pages', (p) => !['home', 'about', 'our-mission', 'our-history', 'leadership', 'coaches-mentors'].includes(p.id));
   return pages.map((p) => ({ params: { slug: p.id }, props: { p } }));
 }
 const { p } = Astro.props;
@@ -17,7 +18,7 @@ const formEmbed = p.id === 'join-us' ? (await settings()).join_form_embed : null
 ---
 <Base title={title} description={description ?? lead}>
   <PageHead title={title} lead={lead} />
-  <section class="section light after-head"><div class="wrap prose md" class:list={{ cards: p.id === 'leadership', faq: p.id === 'faq', wide: p.id === 'leadership' }}>
+  <section class="section light after-head"><div class="wrap prose md" class:list={{ faq: p.id === 'faq' }}>
     <Content />
     {formEmbed && <iframe class="gform" src={formEmbed} title="VorTX student interest form" loading="lazy">Loading…</iframe>}
     {button_label && button_link && <p class="cta"><a class="btn btn-dark" href={button_link}>{button_label} <Icon name="arrow" /></a></p>}
@@ -44,12 +45,6 @@ const formEmbed = p.id === 'join-us' ? (await settings()).join_form_embed : null
 <style>
   .gform{display:block;width:100%;height:1700px;border:0;margin-top:32px;background:var(--cream)}
   @media (max-width:700px){.gform{height:2100px}}
-  .wide{max-width:none}
-  /* Leadership: the list becomes centered cards. */
-  .cards :global(ul){list-style:none;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-  .cards :global(li){margin:0;background:var(--navy);color:var(--white);border-left:6px solid var(--green);padding:12px 18px;min-width:210px;font:700 13px/1.2 var(--body);letter-spacing:.12em;text-transform:uppercase;transition:transform .25s,box-shadow .25s}
-  .cards :global(li strong){display:block;font:900 34px/1.1 var(--head);letter-spacing:0;text-transform:none;margin-bottom:2px}
-  .cards :global(li:hover){transform:translate(-6px,-6px);box-shadow:12px 12px 0 var(--green)}
   /* FAQ accordion */
   .faq.ready{max-width:960px}
   .faq :global(details){border-bottom:4px solid var(--navy);padding:20px 0;interpolate-size:allow-keywords}
@@ -62,5 +57,5 @@ const formEmbed = p.id === 'join-us' ? (await settings()).join_form_embed : null
   .faq :global(details > :not(summary)){max-width:720px;margin-top:12px}
   .faq :global(details::details-content){block-size:0;overflow:hidden;opacity:0;transition:block-size .45s cubic-bezier(.2,.8,.2,1),opacity .35s,content-visibility .45s allow-discrete}
   .faq :global(details[open]::details-content){block-size:auto;opacity:1}
-  @media (prefers-reduced-motion:reduce){.faq :global(details::details-content),.faq :global(summary),.faq :global(summary::after),.cards :global(li){transition:none}}
+  @media (prefers-reduced-motion:reduce){.faq :global(details::details-content),.faq :global(summary),.faq :global(summary::after)}
 </style>

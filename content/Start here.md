@@ -7,7 +7,9 @@ Everything on vortx3735.org comes from the notes in this folder. You don't need 
 | To change | Open |
 |---|---|
 | Homepage text | `pages/home` |
-| About, Mission, History, FAQ, Join us, Sponsor us | the matching note in `pages/` |
+| About page text (the blurb at the top) | `pages/about` |
+| Mission, history, leadership, coaches and mentors (all shown on the About page) | `pages/our-mission`, `pages/our-history`, `pages/leadership`, `pages/coaches-mentors` |
+| FAQ, Join us, Sponsor us | the matching note in `pages/` |
 | Student leads | `pages/leadership` |
 | Coaches and mentors | `pages/coaches-mentors` |
 | A robot, its awards or its photos | its note in `robots/` (one per season) |
