@@ -4,10 +4,6 @@ import PageHead from '../components/PageHead.astro';
 import { settings } from '../lib/content';
 const site = await settings();
 const swatches = [['VorTX Navy', '#00334c'], ['VorTX Green', '#7fc241'], ['White', '#ffffff'], ['Black', '#000000']];
-const more = [
-  ['Programming docs', '/docs/'], ['Our code on GitHub', 'https://github.com/Vortx3735'],
-  ['Sponsorship packet', site.sponsor_packet_link], ['FAQ', '/faq/'], ['Calendar', '/calendar/'],
-];
 ---
 <Base title="Resources" description="VorTX 3735 brand guide, programming docs and logo files.">
   <PageHead title="Our Resources" lead="Branding, code and documentation, shared so other teams and partners can use them." />
@@ -22,8 +18,6 @@ const more = [
     <h2 class="h">Brand basics</h2>
     <ul class="sw">{swatches.map(([n, c]) => <li><i style={`background:${c}`}></i><b>{n}</b><span>{c}</span></li>)}</ul>
     <p class="rules"><b>Logo rules.</b> Do not crop, tilt, pattern or watermark the logo. Use navy or black text on green, never white.</p>
-    <h2 class="lbl">More links</h2>
-    <ul class="more">{more.map(([n, h]) => <li><a href={h}>{n} →</a></li>)}</ul>
   </div></section>
 </Base>
 <style>
@@ -37,9 +31,5 @@ const more = [
   .sw i{display:block;height:90px;border:1px solid #ccc;margin-bottom:8px}
   .sw b{display:block;color:var(--navy)}
   .sw span{font-size:14px;color:var(--grey);text-transform:uppercase}
-  .rules{max-width:640px;margin-bottom:48px}
-  .lbl{font-family:var(--body);font-weight:800;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--navy);margin-bottom:12px}
-  .more{list-style:none;display:flex;flex-wrap:wrap;gap:10px 28px}
-  .more a{font-weight:700;color:var(--navy);text-decoration:none}
-  .more a:hover{color:var(--green)}
+  .rules{max-width:640px}
 </style>
