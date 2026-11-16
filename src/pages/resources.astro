@@ -7,6 +7,10 @@ const t = await text('resources');
 type Card = { title: string; text: string; button: string; link: string };
 // A card link can be a web address, a page, a file in public/, or the name of a link in settings.
 const href = (l: string) => (site[l] ?? l) as string;
+const tools = t.tools as Card[];
+// A link named in settings that is still empty is "disconnected": its button shows as coming soon.
+// A bare name that settings doesn't have yet (no slash, dot or colon) counts as disconnected too.
+const connected = (l: string) => (l in site ? !!site[l] : /[\/.:#]/.test(l));
 const isFile = (l: string) => /^\/(images|files)\//.test(href(l));
 ---
 <Base title={t.title} description={t.lead}>
@@ -23,9 +27,27 @@ const isFile = (l: string) => /^\/(images|files)\//.test(href(l));
       ))}
     </div>
   </div></section>
+  <section class="section tools"><div class="wrap">
+    <h2 class="h">{t.tools_heading}</h2>
+    <div class="tcards">
+      {tools.map((c) => (
+        <article><h3>{c.title}</h3><p>{c.text}</p>
+          {connected(c.link)
+            ? <a class="btn btn-dark" href={href(c.link)} rel="noopener">{c.button}</a>
+            : <span class="btn btn-dark off" aria-disabled="true" role="link">{t.coming_soon}</span>}
+        </article>
+      ))}
+    </div>
+  </div></section>
 </Base>
 <style>
   .section.navy{background:var(--navy);color:var(--white);border-bottom:6px solid var(--green)}
+  .section.tools{background:var(--white)}
+  .tcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:900px}
+  .tcards article{border:2px solid var(--navy);background:var(--white);padding:28px;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+  .tcards h3{font-family:var(--head);text-transform:uppercase;font-size:2rem;line-height:1;color:var(--navy)}
+  .tcards p{flex:1;font-size:1.05rem;color:var(--black)}
+  .btn.off{opacity:.55;cursor:not-allowed;pointer-events:none}
   .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
   .cards article{border:2px solid var(--green);padding:28px;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
   .cards h2{font-family:var(--head);text-transform:uppercase;font-size:2rem;line-height:1;color:var(--white)}

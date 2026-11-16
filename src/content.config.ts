@@ -84,6 +84,9 @@ const settings = defineCollection({
     join_form_embed: z.string().nullish(),
     sponsor_packet_link: z.string(),
     brand_guide_link: z.string(),
+    // Where the team's scouting app and strategy board live. Leave empty until they are online; the buttons on Resources show "coming soon" meanwhile.
+    scout_app_link: z.string().nullish(),
+    strat_board_link: z.string().nullish(),
     calendar_embed_link: z.string().nullish(),
     contact_form_link: z.string().nullish(),
     calendar_add_link: z.string().nullish(),
