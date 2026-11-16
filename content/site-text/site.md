@@ -1,7 +1,7 @@
 ---
-description: "FRC Team 3735 VorTX, the Klein ISD robotics team in Spring, Texas."
+description: "FRC Team 3735 VorTX, the Klein ISD robotics team in Klein, Texas."
 title_suffix: "VorTX 3735"
-home_title: "VorTX 3735 · FRC robotics, Klein ISD"
+home_title: "VorTX 3735"
 tabs:
   - label: "Home"
     href: "/"
