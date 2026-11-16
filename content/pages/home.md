@@ -2,7 +2,7 @@
 title: "Home"
 headline: "We take the world"
 headline_highlight: "by storm"
-robot_link_label: "Specs and Code"
+robot_link_label: "View Specs"
 schools_heading: "Five Schools, One Shop"
 schools_text: "Students from Klein High, Klein Cain, Klein Oak, Klein Collins and Klein Forest build, code, design and run outreach together out of one garage in Klein."
 gallery_heading: "Our Gallery"
