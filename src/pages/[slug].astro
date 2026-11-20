@@ -8,7 +8,7 @@ import { settings } from '../lib/content';
 
 export async function getStaticPaths() {
   // home.md is the homepage, and the About pages are all shown together at /about/ (src/pages/about.astro).
-  const pages = await getCollection('pages', (p) => !['home', 'resources', 'about', 'our-mission', 'our-history', 'leadership', 'coaches-mentors'].includes(p.id));
+  const pages = await getCollection('pages', (p) => !['home', 'resources', 'about', 'our-mission', 'our-history', 'leadership', 'coaches-mentors', 'cte-team'].includes(p.id));
   return pages.map((p) => ({ params: { slug: p.id }, props: { p } }));
 }
 const { p } = Astro.props;

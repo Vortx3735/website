@@ -13,6 +13,7 @@ const history = await page('our-history');
 const mission = await page('our-mission');
 const leaders = await page('leadership');
 const people = await page('coaches-mentors');
+const cte = await page('cte-team');
 const { Content: AboutText } = await render(about);
 const { Content: HistoryText } = await render(history);
 
@@ -22,6 +23,7 @@ const nameRole = (l: string) => { const m = l.match(/^\*\*(.+?)\*\*,?\s*(.*)$/);
 const body = (md: string | undefined) => md ?? '';
 const section = (md: string, heading: string) => { const m = md.split(/^## /m).find((s) => s.startsWith(heading)); return m ? m.slice(heading.length) : ''; };
 const lead = items(body(leaders.body)).map(nameRole);
+const cteTeam = items(body(cte.body)).map(nameRole);
 const coaches = items(section(body(people.body), 'Coaches'));
 const mentors = items(section(body(people.body), 'Mentors'));
 const statements = body(mission.body).split(/\n\s*\n/).map((t) => t.trim()).filter(Boolean);
@@ -49,6 +51,11 @@ const img = photo('robots', current.data.photos[0]);
   <section class="section navy" id="leadership"><div class="wrap">
     <h2 class="big">{t.leadership_heading}</h2>
     <ul class="cards">{lead.map((l) => <li><strong>{l.name}</strong>{l.role}</li>)}</ul>
+  </div></section>
+
+  <section class="section cream" id="cte-team"><div class="wrap">
+    <h2 class="big">{t.cte_heading}</h2>
+    <ul class="cards light-cards">{cteTeam.map((l) => <li><strong>{l.name}</strong>{l.role}</li>)}</ul>
   </div></section>
 
   <section class="section light robot"><div class="wrap two">

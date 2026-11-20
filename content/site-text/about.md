@@ -5,6 +5,7 @@ blurb_heading: "One team,\nfive schools"
 mission_heading: "Our mission"
 history_heading: "Our history"
 leadership_heading: "Leadership"
+cte_heading: "Klein ISD CTE Team"
 robots_heading: "Robots"
 robots_text: "Every season is a new robot, designed, machined, wired and programmed by students. This year it is {name}."
 robots_button: "See all robots"
@@ -14,4 +15,4 @@ mentors_heading: "Mentors"
 mentors_text: "Engineers and professionals who give their time to the team."
 ---
 
-Headings on the About page. The paragraphs and the people come from `pages/about`, `pages/our-mission`, `pages/our-history`, `pages/leadership` and `pages/coaches-mentors`. `{name}` in robots_text becomes the newest robot's name.
+Headings on the About page. The paragraphs and the people come from `pages/about`, `pages/our-mission`, `pages/our-history`, `pages/leadership`, `pages/cte-team` and `pages/coaches-mentors`. `{name}` in robots_text becomes the newest robot's name.

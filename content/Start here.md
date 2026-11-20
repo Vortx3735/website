@@ -8,9 +8,10 @@ Everything on vortx3735.org comes from the notes in this folder. You don't need 
 |---|---|
 | Homepage text | `pages/home` |
 | About page text (the blurb at the top) | `pages/about` |
-| Mission, history, leadership, coaches and mentors (all shown on the About page) | `pages/our-mission`, `pages/our-history`, `pages/leadership`, `pages/coaches-mentors` |
+| Mission, history, leadership, coaches and mentors (all shown on the About page) | `pages/our-mission`, `pages/our-history`, `pages/leadership`, `pages/cte-team`, `pages/coaches-mentors` |
 | FAQ, Join us, Sponsor us | the matching note in `pages/` |
 | Student leads | `pages/leadership` |
+| Klein ISD CTE team (name and role, shown on the About page) | `pages/cte-team` |
 | Coaches and mentors | `pages/coaches-mentors` |
 | A robot, its awards or its photos | its note in `robots/` (one per season) |
 | A sponsor or its logo | its note in `sponsors/` |
