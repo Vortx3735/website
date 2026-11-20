@@ -24,7 +24,7 @@ That box holds the note's **properties** (title, date, photos and so on). The si
 
 ## Common jobs
 
-**Write a blog post.** Copy a note in `blog/` and rename it `YYYY-MM-DD-short-title`. Fill in the title, date, author and summary, write the post, and paste in photos. Uncheck `draft` when it's ready to go live.
+**Write a blog post.** Copy a note in `blog/` and rename it `YYYY-MM-DD-short-title`. Fill in the title, date, author and summary, write the post, and paste in photos. Uncheck `draft` when it's ready to go live. The title, date and author at the top of the post come from the properties. Photos pasted into the post can have a caption: type it between the square brackets, like `![The team at Worlds](assets/team.jpg)`. The photo at the top uses `cover` and `cover_caption`.
 
 **Add a new season's robot.** Copy last season's note in `robots/`, rename it with the new year and robot name, then update the year, name, game and awards. Paste the robot photo into the note, then put its file name (e.g. `assets/my-photo.jpg`) as the first item under `photos`.
 

@@ -68,6 +68,7 @@ const blog = defineCollection({
     author: z.string().nullish(),
     summary: z.string().nullish(),
     cover: z.string().nullish(),
+    cover_caption: z.string().nullish(),
     draft: z.boolean().default(false),
   }),
 });
