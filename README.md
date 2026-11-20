@@ -45,18 +45,12 @@ A new Markdown file in `content/pages/` becomes a new page at `/<file-name>/`.
 From the 2026 brand guide. Colors and fonts are set once in `src/styles/global.css`; use those variables.
 
 - Colors: Navy `#00334C`, Green `#7FC241`, White, Black, Dark grey `#787878`, Light grey `#BCBCBC`, Pastel azure `#9BCEE1`, Dark azure `#012131`, Light yellow `#F0EBD9`. No other colors.
-- Body text: Futura LT (files in `src/assets/fonts/`). Headlines: Franklin Gothic Heavy (Libre Franklin on the web until a webfont license is decided). Arial is not a brand font.
-- **Futura LT is a commercial font.** Confirm the license covers web use before launch, because the font files are downloadable from the site.
+- Body text: Montserrat. Headlines: Franklin Gothic Heavy (Libre Franklin on the web until a webfont license is decided). Arial is not a brand font.
 - White logotype on dark backgrounds only.
 
 ## Still to do before launch
 
-- [ ] Fill in the Instagram, YouTube, Facebook and X links in `content/settings.md` (the footer hides any that are empty)
-- [ ] Update `kickoff_iso` and `kickoff_label` in `content/settings.md` each season (the homepage countdown)
-- [ ] Check the award levels (District, Regional, Championship, Off-season) in `content/robots/*.md`; they are written as `"Award name (detail) [Level]"`
 - [ ] Run `npm run fetch-media` and commit the photos (check media releases first)
-- [ ] Pick a contact form service (e.g. Formspree) and set `contact_form_link` in `content/settings.md`
-- [ ] Paste the Google Calendar embed URL into `calendar_embed_link` in `content/settings.md`
 - [ ] Choose hosting. GitHub Pages on a free org needs this repo public; then set the repo variable `PAGES_ENABLED` to `true`
 - [ ] Archive the old VorTXObsidian repo and point its old URL at `/docs/`
 - [ ] Point vortx3735.org at the new host (mentor sign-off required)
