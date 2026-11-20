@@ -2,34 +2,63 @@
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
-import { posts, photo } from '../../lib/content';
+import { posts, photo, text } from '../../lib/content';
+const t = await text('blog');
 const list = (await posts()).map((p) => ({ ...p, img: photo('blog', p.data.cover) }));
+const [latest, ...rest] = list;
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 ---
-<Base title="Blog" description="News from FRC Team 3735 VorTX.">
-  <PageHead title="Blog" lead="News from the shop, the field and the community." />
-  <section class="section light after-head"><div class="wrap">
-    {list.length === 0 ? <p>No posts yet.</p> : (
-      <ul class="posts">
-        {list.map((p) => (
-          <li>
-            <a href={`/blog/${p.id}/`}>
-              <div class="photo">{p.img && <Image src={p.img} alt="" width={640} />}</div>
-              <time datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time>
-              <h2>{p.data.title}</h2>
-              {p.data.summary && <p>{p.data.summary}</p>}
-            </a>
-          </li>
-        ))}
-      </ul>
-    )}
-  </div></section>
+<Base title={t.title} description={t.lead}>
+  <PageHead title={t.title} lead={t.lead} />
+  {!latest ? (
+    <section class="section light after-head"><div class="wrap"><p>{t.empty}</p></div></section>
+  ) : (
+    <>
+      <section class="section light after-head"><div class="wrap">
+        <a class="feature" href={`/blog/${latest.id}/`}>
+          <div class="photo">{latest.img && <Image src={latest.img} alt="" width={1200} loading="eager" />}</div>
+          <div class="body">
+            <p class="tag">{t.latest_label} · <time datetime={latest.data.date.toISOString()}>{fmt(latest.data.date)}</time></p>
+            <h2>{latest.data.title}</h2>
+            {latest.data.summary && <p class="sum">{latest.data.summary}</p>}
+            <span class="btn btn-dark">{t.read_more}</span>
+          </div>
+        </a>
+      </div></section>
+      {rest.length > 0 && (
+        <section class="section cream"><div class="wrap">
+          <h2 class="h">{t.earlier_heading}</h2>
+          <ul class="posts">
+            {rest.map((p) => (
+              <li>
+                <a href={`/blog/${p.id}/`}>
+                  <div class="photo">{p.img && <Image src={p.img} alt="" width={640} />}</div>
+                  <time datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time>
+                  <h3>{p.data.title}</h3>
+                  {p.data.summary && <p>{p.data.summary}</p>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div></section>
+      )}
+    </>
+  )}
 </Base>
 <style>
-  .posts{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:40px 32px}
+  .feature{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;align-items:center;text-decoration:none;color:var(--black)}
+  .feature .photo{aspect-ratio:16/10;border-radius:4px}
+  .feature .body{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+  .tag{font-size:16px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+  .feature h2{font:800 clamp(2.2rem,4vw,3.6rem)/.95 var(--head);text-transform:uppercase;color:var(--navy);margin:0}
+  .feature:hover h2{text-decoration:underline}
+  .sum{font-size:1.15rem;max-width:44ch}
+  h2.h{font-size:clamp(2.2rem,4vw,3.4rem);text-transform:uppercase;color:var(--navy);margin-bottom:28px;line-height:.9}
+  .posts{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:36px 28px}
   .posts a{text-decoration:none;display:flex;flex-direction:column;gap:8px;color:var(--black)}
   .posts .photo{aspect-ratio:16/10;border-radius:4px;margin-bottom:8px}
-  .posts time{font-size:16px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
-  .posts h2{font:800 26px/1.1 var(--head);color:var(--navy);margin:0}
-  .posts a:hover h2{text-decoration:underline}
+  .posts time{font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+  .posts h3{font:800 24px/1.1 var(--head);color:var(--navy);margin:0}
+  .posts a:hover h3{text-decoration:underline}
+  @media (max-width:800px){.feature{grid-template-columns:1fr;gap:24px}}
 </style>

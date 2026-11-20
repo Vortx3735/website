@@ -13,6 +13,8 @@ tabs:
     href: "/awards/"
   - label: "Gallery"
     href: "/gallery/"
+  - label: "Blog"
+    href: "/blog/"
   - label: "Calendar"
     href: "/calendar/"
   - label: "FAQ"
@@ -21,7 +23,6 @@ tabs:
     href: "/resources/"
   - label: "Sponsors"
     href: "/sponsors/"
-blog_tab_label: "Blog"
 support_label: "Support us"
 join_label: "Join the team"
 email_label: "Email"
@@ -31,7 +32,7 @@ start_year: 2011
 
 Wording that appears on every page: the tabs across the top, the two buttons beside them, and the footer.
 
-- **tabs**: the order here is the order on the site. Delete a tab to hide it, or add one with a `label` and `href`. The Blog tab is added automatically once a post is published.
+- **tabs**: the order here is the order on the site. Delete a tab to hide it, or add one with a `label` and `href`. The Blog tab is a normal tab, so move or remove it here like the others.
 - **description, title_suffix, home_title**: what search engines and browser tabs show.
 - **support_label, join_label**: the two buttons in the header and footer.
 - **copyright, start_year**: the footer line reads "© start_year - this year copyright".

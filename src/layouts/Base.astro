@@ -8,20 +8,16 @@ import '@fontsource/montserrat/800.css';
 import '@fontsource/libre-franklin/800.css';
 import '@fontsource/libre-franklin/900.css';
 import '../styles/global.css';
-import { settings, posts, text } from '../lib/content';
+import { settings, text } from '../lib/content';
 const site = await settings();
 const t = await text('site');
-const hasBlog = (await posts()).length > 0;
 
 interface Props { title?: string; description?: string }
 const { title, description = t.description } = Astro.props;
 const fullTitle = title ? `${title} · ${t.title_suffix}` : t.home_title;
 type Item = { href: string; label: string };
 // One flat row of tabs, same order as the design. About's subpages (mission, history, leadership, coaches and mentors) are linked from the About page, and the programming docs from Resources.
-const nav: Item[] = [
-  ...(t.tabs as Item[]),
-  ...(hasBlog ? [{ href: '/blog/', label: t.blog_tab_label }] : []),
-];
+const nav: Item[] = t.tabs as Item[];
 const socials = [
   { label: 'Instagram', href: site.instagram_link },
   { label: 'YouTube', href: site.youtube_link },
