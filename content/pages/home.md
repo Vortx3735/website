@@ -9,7 +9,7 @@ gallery_heading: "Our Gallery"
 join_heading: "Build it."
 join_text: "No experience needed. Students from Klein High, Klein Cain, Klein Oak, Klein Collins and Klein Forest build, code, design and run outreach together."
 sponsor_heading: "Back it."
-sponsor_text: "Sponsors fund parts, travel and summer camps. See what your support makes possible in our sponsorship package."
+sponsor_text: "Sponsors fund parts, travel and summer camps. Your support keeps the shop open to students from five Klein ISD schools. See our sponsorship package."
 ---
 
 This file holds the homepage text. Edit the properties above. The robot card and the awards ticker come from the robots folder, and the sponsor names from the sponsors folder.

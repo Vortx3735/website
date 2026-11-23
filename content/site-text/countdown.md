@@ -8,7 +8,7 @@ timezone: "America/Chicago"
 events:
   - name: "Kickoff"
     date: "2027-01-09 11:00"
-    when: "Saturday, January 9, 2027, at 11:00 PM Central Time (CT)"
+    when: "Saturday, January 9, 2027, at 11:00 AM Central Time (CT)"
     current_hours: 4
   - name: "TX District Houston - Week 2"
     date: "2027-03-11 17:00"
