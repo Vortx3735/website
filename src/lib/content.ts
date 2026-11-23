@@ -1,6 +1,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import { getImage } from 'astro:assets';
+import { parseWhen, whenLabel, type CountdownEvent } from './countdown';
 
 // Every image saved in an `assets` folder inside /content, keyed by its path.
 const images = import.meta.glob<{ default: ImageMetadata }>(
@@ -88,4 +89,20 @@ export function parseAward(raw: string) {
   const rest = raw.replace(/\s*\[[^\]]+\]\s*$/, '');
   const m = rest.match(/^(.*?)\s*\((.*)\)$/);
   return { name: m ? m[1] : rest, detail: m ? m[2] : null, tier };
+}
+
+/** The homepage countdown queue (content/site-text/countdown.md): up to 5 events, soonest first. */
+export async function countdown() {
+  const c = await text('countdown');
+  const zone = String(c.timezone ?? 'America/Chicago');
+  const events: CountdownEvent[] = ((c.events ?? []) as Record<string, any>[])
+    .map((e) => {
+      const z = String(e.timezone ?? zone);
+      const ts = parseWhen(e.date, z);
+      return { name: String(e.name ?? ''), eyebrow: String(e.eyebrow ?? c.eyebrow ?? ''), when: String(e.when ?? whenLabel(ts, z)), ts, hours: Number(e.current_hours ?? c.current_hours ?? 24) };
+    })
+    .filter((e) => e.name && !Number.isNaN(e.ts))
+    .sort((a, b) => a.ts - b.ts)
+    .slice(0, 5);
+  return { events, text: { heading: String(c.heading ?? '{name} in'), current_eyebrow: String(c.current_eyebrow ?? 'Current event'), now_text: String(c.now_text ?? 'Happening now') } };
 }

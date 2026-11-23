@@ -96,9 +96,6 @@ const settings = defineCollection({
     youtube_link: z.string().nullish(),
     facebook_link: z.string().nullish(),
     x_link: z.string().nullish(),
-    // Countdown on the homepage. kickoff_iso is the exact moment (with time zone); kickoff_label is the text shown under it.
-    kickoff_iso: z.string().nullish(),
-    kickoff_label: z.string().nullish(),
   }),
 });
 

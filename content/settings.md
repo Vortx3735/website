@@ -17,8 +17,6 @@ instagram_link: "https://www.instagram.com/vortx3735/?hl=en"
 youtube_link: "https://www.youtube.com/channel/UCxOHt6h_aFeYcS7nnuXV1mw"
 facebook_link: "https://www.facebook.com/VorTX3735/"
 x_link: "https://x.com/vortx3735"
-kickoff_iso: "2027-01-09T12:00:00-05:00"
-kickoff_label: "Saturday, January 9, 2027, at 12:00 PM Eastern Time (ET)"
 ---
 
 Site-wide settings. Edit the properties above.
@@ -27,6 +25,6 @@ Site-wide settings. Edit the properties above.
 - **contact_form_link**: the form address from the contact form service (for example Formspree). The contact form stays hidden until this is filled in.
 - **email, instagram_link, youtube_link, facebook_link, x_link**: shown in the footer. A link that is left empty is hidden.
 - **scout_app_link, strat_board_link**: the web addresses of VorTX Scout (scouting app) and VorTX Board (strategy board). Until they are filled in, their buttons on the Resources page show "Coming soon" and don't go anywhere.
-- **kickoff_iso, kickoff_label**: the homepage countdown. Update both each season (`kickoff_iso` needs the time zone offset, like `-05:00`).
+- The homepage countdown now lives in `site-text/countdown`.
 - **calendar_add_link**: the "Add to my calendar" button on the calendar page. It only works while the Google calendar is public.
 - **join_form_link, join_form_embed**: the 26-27 student interest form. The link is the form itself; the embed is the same link with `?embedded=true`, shown on the Join us page. For a new season, paste the new form's link in both.

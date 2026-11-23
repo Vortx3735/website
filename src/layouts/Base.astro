@@ -8,6 +8,7 @@ import '@fontsource/montserrat/800.css';
 import '@fontsource/libre-franklin/800.css';
 import '@fontsource/libre-franklin/900.css';
 import '../styles/global.css';
+import Icon from '../components/Icon.astro';
 import { settings, text } from '../lib/content';
 const site = await settings();
 const t = await text('site');
@@ -19,10 +20,10 @@ type Item = { href: string; label: string };
 // One flat row of tabs, same order as the design. About's subpages (mission, history, leadership, coaches and mentors) are linked from the About page, and the programming docs from Resources.
 const nav: Item[] = t.tabs as Item[];
 const socials = [
-  { label: 'Instagram', href: site.instagram_link },
-  { label: 'YouTube', href: site.youtube_link },
-  { label: 'Facebook', href: site.facebook_link },
-  { label: 'X', href: site.x_link },
+  { label: 'Instagram', icon: 'instagram', href: site.instagram_link },
+  { label: 'YouTube', icon: 'youtube', href: site.youtube_link },
+  { label: 'Facebook', icon: 'facebook', href: site.facebook_link },
+  { label: 'X', icon: 'x', href: site.x_link },
 ].filter((l) => l.href);
 const path = Astro.url.pathname;
 const aboutPages = ['/about/', '/our-mission/', '/our-history/', '/leadership/', '/coaches-mentors/'];
@@ -62,8 +63,8 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/'
     <div class="wrap row">
       <a href="/" class="logo" aria-label="VorTX 3735 home"><img src="/images/logotype-white.png" alt="VorTX 3735" width="180" height="48"></a>
       <ul class="links" aria-label="Social links and contact">
-        {socials.map((l) => <li><a href={l.href} rel="noopener">{l.label}</a></li>)}
-        <li><a class="mail" href={`mailto:${site.email}`} aria-label={`Email ${site.email}`}>{t.email_label}</a></li>
+        {socials.map((l) => <li><a class="ico" href={l.href} rel="noopener" aria-label={l.label} title={l.label}><Icon name={l.icon} /></a></li>)}
+        <li><a class="ico" href={`mailto:${site.email}`} aria-label={`${t.email_label} ${site.email}`} title={t.email_label}><Icon name="mail" /></a></li>
         <li><a class="sup" href="/support-us/">{t.support_label}</a></li>
       </ul>
     </div>
@@ -111,6 +112,8 @@ const isCurrent = (n: Item) => n.href === '/' ? path === '/'
   .links{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:10px 24px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
   .links a{text-decoration:underline}
   .links a:hover{color:var(--green)}
+  .links a.ico{display:inline-flex;text-decoration:none;padding:6px}
+  .links a.ico :global(svg){width:26px;height:26px}
   .links .sup{color:var(--green);text-decoration:none}
   .legal{margin-top:28px;font-size:13px}
 </style>

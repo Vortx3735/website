@@ -32,7 +32,8 @@ Two ways to edit:
 | Robots and each season's awards | `content/robots/*.md` (one per season) |
 | Sponsors and their logos | `content/sponsors/*.md` (one per sponsor) |
 | Blog posts (`draft: true` hides a post) | `content/blog/*.md` |
-| Address, join form, sponsor packet, calendar, contact form, footer links, kickoff countdown | `content/settings.md` |
+| Address, join form, sponsor packet, calendar, contact form, footer links | `content/settings.md` |
+| Homepage countdown (up to 5 events, current-event time) | `content/site-text/countdown.md` |
 | Programming notes at `/docs/` | `content/docs/` |
 
 Put images in the `assets/` folder next to the file that uses them. Obsidian does this for you.

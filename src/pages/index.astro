@@ -3,11 +3,15 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import Rings from '../components/Rings.astro';
-import { page, robots, sponsors, photo, galleryPhotos, settings, parseAward, text } from '../lib/content';
+import { page, robots, sponsors, photo, galleryPhotos, settings, parseAward, text, countdown } from '../lib/content';
+import { view } from '../lib/countdown';
 
 const home = (await page('home')).data as Record<string, string>;
 const site = await settings();
 const t = await text('home');
+const cd = await countdown();
+// First paint: what the countdown shows at build time. The script below keeps it live.
+const first = view(cd.events, Date.now(), cd.text);
 const g = await text('gallery');
 const all = await robots();
 const current = all[0];
@@ -45,12 +49,13 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
     </div></div>
   </div>
 
-  <section class="count" data-kickoff={site.kickoff_iso} aria-label="Countdown to kickoff">
+  <section class="count" data-events={JSON.stringify(cd.events)} data-text={JSON.stringify(cd.text)} aria-label="Countdown" hidden={first.mode === 'none'}>
     <div class="wrap in">
-      <div class="lbl"><p class="eyebrow">{t.countdown_eyebrow}</p><div class="h big">{t.countdown_heading}</div>{site.kickoff_label && <p class="when">{site.kickoff_label}</p>}</div>
-      <div class="tiles">
+      <div class="lbl"><p class="eyebrow" data-eyebrow>{first.eyebrow}</p><div class="h big" data-heading>{first.heading}</div><p class="when" data-when>{first.when}</p></div>
+      <div class="tiles" hidden={first.mode === 'now'}>
         {['days', 'hours', 'minutes', 'seconds'].map((u) => <div class="tile"><div class="num" data-unit={u}>00</div><div class="u">{u}</div></div>)}
       </div>
+      <div class="tiles" data-now hidden={first.mode !== 'now'}><div class="tile now">{cd.text.now_text}</div></div>
     </div>
   </section>
 
@@ -100,15 +105,22 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
 </Base>
 
 <script>
-  // Countdown to kickoff: reads the date from content/settings.md (kickoff_iso).
-  const box = document.querySelector<HTMLElement>('[data-kickoff]');
-  const target = Date.parse(box?.dataset.kickoff ?? '');
-  if (box && !Number.isNaN(target)) {
+  // Countdown: reads the event queue from content/site-text/countdown.md and moves to the next event on its own.
+  import { view } from '../lib/countdown';
+  const box = document.querySelector<HTMLElement>('.count[data-events]');
+  if (box) {
+    const events = JSON.parse(box.dataset.events ?? '[]');
+    const tx = JSON.parse(box.dataset.text ?? '{}');
     const pad = (n: number) => String(n).padStart(2, '0');
+    const set = (sel: string, v: string) => { const e = box.querySelector(sel); if (e && e.textContent !== v) e.textContent = v; };
     const tick = () => {
-      const sec = Math.max(0, Math.floor((target - Date.now()) / 1000));
-      const v: Record<string, number> = { days: Math.floor(sec / 86400), hours: Math.floor((sec % 86400) / 3600), minutes: Math.floor((sec % 3600) / 60), seconds: sec % 60 };
-      for (const k in v) { const e = box.querySelector(`[data-unit="${k}"]`); if (e) e.textContent = k === 'days' && v.days > 99 ? String(v.days) : pad(v[k]); }
+      const v = view(events, Date.now(), tx);
+      box.hidden = v.mode === 'none';
+      set('[data-eyebrow]', v.eyebrow); set('[data-heading]', v.heading); set('[data-when]', v.when);
+      const tiles = box.querySelectorAll<HTMLElement>('.tiles');
+      tiles[0].hidden = v.mode === 'now'; tiles[1].hidden = v.mode !== 'now';
+      const n: Record<string, number> = { days: Math.floor(v.sec / 86400), hours: Math.floor((v.sec % 86400) / 3600), minutes: Math.floor((v.sec % 3600) / 60), seconds: v.sec % 60 };
+      for (const k in n) set(`[data-unit="${k}"]`, k === 'days' && n.days > 99 ? String(n.days) : pad(n[k]));
     };
     tick();
     setInterval(tick, 1000);
@@ -140,7 +152,9 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
   .count .in{display:flex;flex-wrap:wrap;gap:24px 40px;align-items:flex-end;justify-content:space-between}
   .count .big{font-size:clamp(3.5rem,7vw,6.25rem);text-transform:uppercase;line-height:.9}
   .when{margin-top:10px;font-size:15px}
+  .tile.now{font:900 clamp(1.6rem,3vw,2.4rem)/1 var(--head);text-transform:uppercase;padding:22px 32px}
   .tiles{display:flex;flex-wrap:wrap;gap:10px}
+  .tiles[hidden]{display:none}
   .tile{background:var(--white);color:var(--navy);padding:14px 22px;min-width:104px;text-align:center}
   .num{font:900 56px/.95 var(--head);font-variant-numeric:tabular-nums}
   .u{font-weight:800;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
