@@ -3,17 +3,53 @@
 ---
 <dialog id="lightbox" aria-label="Expanded photo">
   <button type="button" class="x" aria-label="Close">×</button>
+  <button type="button" class="ln lprev" aria-label="Previous photo" hidden>‹</button>
   <img alt="" />
+  <button type="button" class="ln lnext" aria-label="Next photo" hidden>›</button>
+  <span class="lcount" aria-hidden="true" hidden></span>
 </dialog>
 <script>
   const box0 = document.getElementById('lightbox') as HTMLDialogElement;
   const big = box0.querySelector('img')!;
-  box0.addEventListener('click', (e) => { if (e.target !== big) box0.close(); });
+  const lprev = box0.querySelector<HTMLElement>('.lprev')!;
+  const lnext = box0.querySelector<HTMLElement>('.lnext')!;
+  const lcount = box0.querySelector<HTMLElement>('.lcount')!;
+  box0.addEventListener('click', (e) => { if (e.target === box0) box0.close(); });
+  const reduce = () => (matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth') as ScrollBehavior;
+  // The photo scroller that opened the expanded view, and the photo shown.
+  let cur: { track: HTMLElement; i: number } | null = null;
+  const show = (i: number) => {
+    if (!cur) return;
+    const n = cur.track.children.length;
+    cur.i = (i + n) % n;
+    const slide = cur.track.children[cur.i] as HTMLElement;
+    if (!slide.dataset.full) return;
+    big.src = slide.dataset.full;
+    big.alt = slide.querySelector('img')?.alt ?? '';
+    lcount.textContent = `${cur.i + 1} / ${n}`;
+    cur.track.scrollTo({ left: cur.i * cur.track.clientWidth, behavior: 'auto' });
+  };
+  lprev.addEventListener('click', (e) => { e.stopPropagation(); show(cur!.i - 1); });
+  lnext.addEventListener('click', (e) => { e.stopPropagation(); show(cur!.i + 1); });
+  box0.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(cur!.i - 1); if (e.key === 'ArrowRight') show(cur!.i + 1); });
+  box0.addEventListener('close', () => { cur = null; });
+  // Swipe or drag sideways, or scroll sideways on a trackpad, to move between photos without closing the view.
+  let x0 = 0, dragged = false, wheelAt = 0;
+  big.addEventListener('pointerdown', (e) => { x0 = e.clientX; dragged = false; big.setPointerCapture(e.pointerId); });
+  big.addEventListener('pointerup', (e) => {
+    const dx = e.clientX - x0;
+    if (Math.abs(dx) > 50) { dragged = true; show(cur!.i + (dx < 0 ? 1 : -1)); }
+  });
+  big.addEventListener('dragstart', (e) => e.preventDefault());
+  big.addEventListener('click', (e) => { if (dragged) { e.stopPropagation(); dragged = false; } });
+  box0.addEventListener('wheel', (e) => {
+    if (!cur || Math.abs(e.deltaX) < Math.abs(e.deltaY) || Math.abs(e.deltaX) < 20 || Date.now() - wheelAt < 400) return;
+    wheelAt = Date.now(); show(cur.i + (e.deltaX > 0 ? 1 : -1));
+  }, { passive: true });
   document.querySelectorAll<HTMLElement>('.media').forEach((box) => {
     const track = box.querySelector<HTMLElement>('.track')!;
     const count = box.querySelector<HTMLElement>('.count');
     const n = track.children.length;
-    const reduce = () => (matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth') as ScrollBehavior;
     const idx = () => Math.round(track.scrollLeft / track.clientWidth);
     const go = (d: number) => {
       const next = idx() + d;
@@ -27,18 +63,37 @@
     const open = () => {
       const slide = track.children[idx()] as HTMLElement;
       if (!slide.dataset.full) return;
-      big.src = slide.dataset.full;
-      big.alt = slide.querySelector('img')?.alt ?? '';
+      cur = { track, i: idx() };
+      lprev.hidden = lnext.hidden = lcount.hidden = n < 2;
+      show(cur.i);
       box0.showModal();
     };
     box.querySelector('.zoom')?.addEventListener('click', open);
     track.addEventListener('click', open);
+
+    // Automatic scrolling on a timer (data-auto is the number of seconds). Skipped for people who ask for less motion.
+    const secs = Number(box.dataset.auto);
+    if (secs > 0 && n > 1 && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
+      let held = false, seen = true;
+      const hold = (v: boolean) => () => { held = v; };
+      box.addEventListener('pointerenter', hold(true)); box.addEventListener('pointerleave', hold(false));
+      box.addEventListener('focusin', hold(true)); box.addEventListener('focusout', hold(false));
+      box.addEventListener('touchstart', hold(true), { passive: true });
+      box.addEventListener('touchend', () => setTimeout(() => { held = false; }, 4000), { passive: true });
+      new IntersectionObserver(([e]) => { seen = e.isIntersecting; }).observe(box);
+      setInterval(() => { if (!held && seen && !box0.open && !document.hidden) go(1); }, secs * 1000);
+    }
   });
 </script>
 <style>
   #lightbox{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100vw;height:100vh;overflow:hidden}
   #lightbox::backdrop{background:rgba(1,33,49,.92)}
   #lightbox[open]{display:grid;place-items:center}
-  #lightbox img{max-width:min(94vw,1600px);max-height:90vh;object-fit:contain;border-bottom:6px solid var(--green)}
+  #lightbox img{touch-action:pan-y;cursor:grab;user-select:none;max-width:min(94vw,1600px);max-height:90vh;object-fit:contain}
+  #lightbox .ln{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:64px;border:0;background:var(--navy);color:var(--white);font:900 36px/1 var(--head);cursor:pointer}
+  #lightbox .ln:hover,#lightbox .ln:focus-visible{background:var(--green);color:var(--navy)}
+  #lightbox .lprev{left:12px}#lightbox .lnext{right:12px}
+  #lightbox .lcount{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:var(--navy);color:var(--white);font:700 13px/1 var(--body);letter-spacing:.1em;padding:8px 12px}
+  #lightbox [hidden]{display:none}
   #lightbox .x{position:absolute;top:16px;right:16px;width:48px;height:48px;border:0;background:var(--green);color:var(--navy);font:900 32px/1 var(--head);cursor:pointer}
 </style>

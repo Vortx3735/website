@@ -26,7 +26,7 @@ const head = (h: string) => { const w = h.split(' '); const last = w.pop(); retu
   <PageHead flat eyebrow={fill(t.eyebrow, vals)} title={fill(t.title, vals)} lead={cur.tagline ?? fill(t.lead, vals)} />
   {results && <div class="results"><div class="wrap">{results}</div></div>}
   <section class="section light story"><div class="wrap two">
-    <div class="pic"><div class="photo">{cur.photos.imgs[0] && <Image src={cur.photos.imgs[0]} alt={`${cur.name}, our ${cur.year} robot`} width={1000} loading="eager" />}</div></div>
+    <div class="pic"><div class="frame"><PhotoScroller robot={cur.photos} width={1200} eager auto={Number(t.scroll_seconds) || 0} /></div></div>
     <div class="md"><Story /></div>
   </div></section>
   {cur.tribute_heading && <section class="section grey"><div class="wrap">
@@ -71,7 +71,7 @@ const head = (h: string) => { const w = h.split(' '); const last = w.pop(); retu
   .two{display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start}
   .two .pic{flex:1 1 560px;position:relative}
   .two .pic::before{content:"";position:absolute;left:-16px;top:-16px;right:40px;bottom:40px;background:var(--green)}
-  .two .photo{position:relative;aspect-ratio:3/2;margin:16px 0 0 16px}
+  .two .frame{position:relative;margin:16px 0 0 16px}
   .two .md{flex:1 1 400px;font-size:17px}
   h2.big{font-size:clamp(3rem,7vw,6rem);text-transform:uppercase;color:var(--navy);line-height:.9;margin-bottom:28px}
   h2.big em{font-style:normal;background:var(--green);padding:0 10px}

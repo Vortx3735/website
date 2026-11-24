@@ -6,6 +6,7 @@ description: "Meet {name}, our {year} robot, and every VorTX and Klein Bots robo
 tribute_placeholder: "Photo"
 specs_heading: "Spec sheet"
 view_stats: "View stats"
+scroll_seconds: 5
 all_heading: "Every robot"
 all_lead: "Every earlier season, newest first."
 detail_awards_heading: "Awards"
@@ -20,5 +21,7 @@ no_awards: "No awards this season."
 Wording on the Robots page and on each robot's own page. `{year}`, `{name}` and `{game}` are filled in from the robot.
 
 - The newest robot is featured at the top of the Robots page. Older robots move into the "Every robot" list and open their own page at `/robots/<note name>/`.
+- **scroll_seconds**: how many seconds each photo of the featured robot shows before it moves to the next. Use 0 to turn automatic scrolling off. It pauses while someone's mouse is over the photo or the expanded view is open.
+- **More photos**: add more file names under `photos` in the robot's note and the featured picture scrolls through all of them. Click a photo (or the expand button) to see it larger, with arrows to move between photos.
 - **Spec sheet**: shown for any robot whose note has a `specs` list. Add as many as you like (`drivetrain`, `top_speed`, `weight`, and so on); each key becomes a box.
 - **tagline, dedication, tribute_heading**: set these in a robot's note, not here (see `Start here`).
