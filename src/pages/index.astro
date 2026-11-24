@@ -191,8 +191,8 @@ const [schoolsA, ...schoolsB] = (home.schools_heading ?? '').split(',');
   .ask p{max-width:46ch}
   .ask .btn{margin-top:auto}
   .spons{padding:88px 0}
-  .spons-h{font:900 clamp(2.6rem,5.5vw,5rem)/.98 var(--head);text-transform:uppercase;color:var(--navy);max-width:1000px;margin-bottom:36px}
-  .spons-h em{font-style:normal;background:var(--green);padding:0 10px}
+  .spons-h{font:900 clamp(2.6rem,5.5vw,5rem)/1.32 var(--head);text-transform:uppercase;color:var(--navy);max-width:1000px;margin-bottom:36px}
+  .spons-h em{font-style:normal;background:var(--green);padding:0 10px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
   .lg{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:16px}
   .lg.big{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
   .lg li{background:var(--white);border:1px solid #e4e4e4;height:112px;display:grid;place-items:center;padding:16px;text-align:center;font-weight:700;color:var(--navy)}
