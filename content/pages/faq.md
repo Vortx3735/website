@@ -22,6 +22,10 @@ No. Mechanical, electrical, programming, design, business and outreach all start
 
 Students from any Klein ISD high school. Our members come from Klein High, Klein Cain, Klein Oak, Klein Collins and Klein Forest.
 
+## How does the team communicate?
+
+We communicate using Microsoft Teams.
+
 ## Can I visit before I sign up?
 
 Yes. Show up on a Friday and see how the team works.
